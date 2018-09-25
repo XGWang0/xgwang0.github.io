@@ -289,7 +289,7 @@ a1.channels.c1.transactionCapacity = 100
 a1.sources.r1.channels = c1
 a1.sinks.k1.channel = c1
 ```
-_ When the sink k1 is power down or crash, the channel will send event to k2. Additionally, the priority value of a1.sinkgroups.g1.processor.priority.k1 is bigger, more chance the sink will be used prioritily _
+* When the sink k1 is power down or crash, the channel will send event to k2. Additionally, the priority value of a1.sinkgroups.g1.processor.priority.k1 is bigger, more chance the sink will be used prioritily *
 
 ### sink to hdfs
 
@@ -339,5 +339,50 @@ output:
 -rw-r--r--   2 root supergroup        146 2018-09-21 05:04 /flume/flume_test.1537520696167
 -rw-r--r--   2 root supergroup         39 2018-09-21 05:05 /flume/flume_test.1537520696168
 ```
->hdfs://myhdfs/ 为集群的server name
+> hdfs://myhdfs/ 为集群的server name
 
+
+### sink data into hbase
+
+config file
+
+```doc
+# 指定Agent的组件名称（a），一个进程
+a.sources=r1
+a.channels=c1
+a.sinks=k1
+
+# For netcat source
+a.sources.r1.type=spooldir
+a.sources.r1.spoolDir=/tmp/flume/
+a.sources.r1.fileHeader = true
+a.sources.r1.interceptors = i1
+a.sources.r1.interceptors.i1.type = timestamp
+
+a.sources.r1.channels=c1
+
+a.channels.c1.type=memory
+a.channels.c1.capacity=1000
+a.channels.c1.transactionCapacity=1000
+
+
+a.sinks.k1.channel=c1
+
+#a.sinks.k1.type = logger
+a.sinks.k1.type = hbase
+a.sinks.k1.table = flume_table
+a.sinks.k1.columnFamily = bar_cf
+a.sinks.k1.serializer = org.apache.flume.sink.hbase.RegexHbaseEventSerializer
+```
+
+* steps *
+
+*.Create table in hbase
+```sh
+hbase> create "flume_table","bar_cf"
+```
+
+*.Startup flume
+```sh
+
+``
