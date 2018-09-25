@@ -384,5 +384,17 @@ hbase> create "flume_table","bar_cf"
 
 *.Startup flume
 ```sh
-
+flume-ng  agent --conf ./conf/ -f conf/spolling_dir_sink_hbase.conf -Dflume.root.logger=DEBUG,console -n a
 ``
+
+*.New a file to /tmp/flume
+```sh
+>echo "aaaaaaaaaa 11111111111" > /tmp/flume/sample.txt
+```
+
+*.Verify data if is into habse
+```sh
+#> hbase shell
+
+hbase>scan "flume_table"
+```
