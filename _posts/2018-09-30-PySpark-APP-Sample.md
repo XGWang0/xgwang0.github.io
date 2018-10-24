@@ -64,7 +64,12 @@ from pyspark import SparkContext, SparkConf
 
 appName ="spark_1" #应用程序名称
 master= "spark://master:7077"#hadoop01为主节点hostname，请换成自己的主节点主机名称
+#master="yarn"
+
 conf = SparkConf().setAppName(appName).setMaster(master)
+
+#conf.set("spark.submit.deployMode","cluster")   #此语句应与 master = “yarn“ 同时使用，用以提交task到yarn的client或者cluster
+
 #conf.set("spark.executor.memory", "128M") 
 conf.set("spark.shuffle.service.enabled", "false")
 
