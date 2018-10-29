@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  "Spark Running Flow"
-categories: Spark
-tags:  bigdata structure mapreduce spark
+title:  "Kafka Installation And Introduction"
+categories: Kafka
+tags:  bigdata MQ Kafka
 author: Root Wang
 ---
 

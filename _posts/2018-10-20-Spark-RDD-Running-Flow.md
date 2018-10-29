@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Spark Running Flow"
+title:  "Spark RDD Intruoduction And Structure"
 categories: Spark
 tags:  bigdata structure mapreduce spark
 author: Root Wang

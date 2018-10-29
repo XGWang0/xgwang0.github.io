@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  "Spark Running Flow"
+title:  "Kafka Partition VS Cusmtomer Group"
 categories: Spark
-tags:  bigdata structure mapreduce spark
+tags:  bigdata MQ Kafka
 author: Root Wang
 ---
 
