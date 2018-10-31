@@ -32,19 +32,6 @@ author: Root Wang
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Hadoop构造模块
 
   运行Hadoop的意思其实就是运行一组守护进程（daemons），每个进程都有各自的角色，有的仅运行在单个服务器上，有的则运行在集群多个服务器上，它们包括：
@@ -89,3 +76,4 @@ author: Root Wang
 ![](https://github.com/XGWang0/wiki/raw/master/_images/hadoop_components_chart.png)
 
 引自：https://blog.csdn.net/suifeng3051/article/details/37932593
+
