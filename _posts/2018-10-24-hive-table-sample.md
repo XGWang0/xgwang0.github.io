@@ -345,6 +345,29 @@ Let us now discuss the pros and cons of Hive partitioning and Bucketing one by o
 
 1.We can define a number of buckets during table creation. But loading of an equal volume of data has to be done manually by programmers.
 
+#### column chosen for partititon VS bucket
+*.Partitioning:
+
+When choosing a partition column in a table, `partitioning column should not have high cardinality (no.of possible values in column).`
+
+For example, a table contains employee_id, emp_timestamp and country. if we select emp_timestamp as partitioning column, then we will end up creating billions of folders in HDFS.
+
+This will increase overhead on Name Node and decrease overall performance. In this case, we can choose country as partitioning column, because it will create maximum 196 partitions ( as total number of counties in world are 196).
+
+*.Bucketing:
+
+Bucketing decomposes data in each partition into `equal number of parts` as we specify in DDL.
+
+In this example, we can declare employee_id as bucketing column, and no.of buckets as 4.
+
+If we have 10000 records in USA partition, then each bucket file will have 2500 records inside USA partition.
+
+Further if we apply _sorted by_ clause on employee_id , then joining of two tables with same bucketed and sorted column will be very quick.
+
+
+>Bucketing works well when the field has high cardinality and data is evenly distributed among buckets.
+>Partitioning works best when the cardinality of the partitioning field is not too high.
+
 #### Conclusion
 In conclusion to Hive Partitioning vs Bucketing, we can say that both partition and bucket distributes a subset of the table’s data to a subdirectory. Hence, Hive organizes tables into partitions. And it subdivides partition into buckets. 
 
