@@ -15,7 +15,7 @@ Hive的表，与普通关系型数据库，如mysql在表上有很大的区别�
 
 hive总体来说可以总结为三种不同类型的表:
 
-### 普通表:
+### 普通表 Managed Table (Internal Table):
 ```sql
 CREATE [EXTERNAL] TABLE [IF NOT EXISTS] table_name   
   [(col_name data_type [COMMENT col_comment], ...)]   
@@ -71,9 +71,14 @@ drwxr-xr-x   - root supergroup          0 2018-10-30 16:09 /user/hive_01
 -rw-r--r--   2 root supergroup         31 2018-10-30 16:09 /user/hive_01/hello.txt
 ```
 
-### Partition table:
 
-#### What is Partitions?
+
+
+
+
+
+
+### Partitions
 Hive Partitions is a way to organizes tables into partitions by dividing tables into different parts based on partition keys.
 
 Partition is helpful when the table has one or more Partition keys. Partition keys are basic elements for determining how the data is stored in the table.
@@ -131,7 +136,7 @@ drwxr-xr-x   - root supergroup          0 2018-10-30 17:24 /user/hive/warehouse/
 -rw-r--r--   2 root supergroup          8 2018-10-30 17:24 /user/hive/warehouse/hive_03/state=p4/000000_0
 ```
 
-#### What is Buckets?
+### Buckets
 Buckets in hive is used in segregating of hive table-data into multiple files or directories. it is used for efficient querying.
 
 The data i.e. present in that partitions can be divided further into Buckets
@@ -184,3 +189,162 @@ hive> SET hive.txn.manager =org.apache.hadoop.hive.ql.lockmgr.DbTxnManager;
 hive> SET hive.compactor.initiator.on = true;
 hive> SET hive.compactor.worker.threads = 1;
 ```
+
+
+### Internal Table VS External Table:
+
+#### Apache Hive Internal and External Tables
+
+Hive is an open source data warehouse system used for querying and analyzing large datasets. Data in Apache Hive can be categorized into Table, Partition, and Bucket. The table in Hive is logically made up of the data being stored. Hive has two types of tables which are as follows:
+
+*.Managed Table (Internal Table)
+*.External Table
+
+*Hive Managed Tables*
+
+It is also know an internal table. When we create a table in Hive, it by default manages the data. This means that Hive moves the data into its warehouse directory.
+
+*Hive External Tables*
+
+We can also create an external table. It tells Hive to refer to the data that is at an existing location outside the warehouse directory.
+
+#### Featured Difference between Hive Internal Tables vs External Tables
+
+##### LOAD and DROP Semantics
+We can see the main difference between the two table type in the LOAD and DROP semantics.
+
+*.Managed Tables – When we load data into a Managed table, then Hive moves data into Hive warehouse directory.
+For example:
+
+```sql
+CREATE TABLE managed_table (dummy STRING);
+LOAD DATA INPATH '/user/tom/data.txt' INTO table managed_table;
+```
+
+This moves the file hdfs://user/tom/data.txt into Hive’s warehouse directory for the managed_table table, which is hdfs://user/hive/warehouse/managed_table.
+
+Further, if we drop the table using:
+```sql
+DROP TABLE managed_table
+```
+
+Then this will delete the table metadata including its data. The data no longer exists anywhere. This is what it means for HIVE to manage the data.
+
+External Tables – External table behaves differently. In this, we can control the creation and deletion of the data. The location of the external data is specified at the table creation time:
+
+```sql
+CREATE EXTERNAL TABLE external_table(dummy STRING)
+LOCATION '/user/tom/external_table';
+LOAD DATA INPATH '/user/tom/data.txt' INTO TABLE external_table;
+```
+
+Now, with the EXTERNAL keyword, Apache Hive knows that it is not managing the data. So it doesn’t move data to its warehouse directory. It does not even check whether the external location exists at the time it is defined. This very useful feature because it means we create the data lazily after creating the table.
+
+The important thing to notice is that when we drop an external table, Hive will leave the data untouched and only delete the metadata.
+
+##### Security
+
+*.`Managed Tables` – Hive solely controls the Managed table security. Within Hive, security needs to be managed; probably at the schema level (depends on organization).
+*.`External Tables` – These tables’ files are accessible to anyone who has access to HDFS file structure. So, it needs to manage security at the HDFS file/folder level.
+
+##### When to use Managed and external table
+
+*Use Managed table when*
+
+*.We want Hive to completely manage the lifecycle of the data and table.
+*.Data is temporary
+
+
+*Use External table when*
+
+*.Data is used outside of Hive. For example, the data files are read and processed by an existing program that does not lock the files.
+*.We are not creating a table based on the existing table.
+*.We need data to remain in the underlying location even after a DROP TABLE. This may apply if we are pointing multiple schemas at a single data set.
+*.The hive shouldn’t own data and control settings, directories etc., we may have another program or process that will do these things.
+
+### Conclusion
+
+In conclusion, Managed tables are like normal database table in which we can store data and query on. On dropping Managed tables, the data stored in them is also deleted and data is lost forever. While dropping External tables will delete metadata but not the data.
+
+
+### What is Hive Partitioning and Bucketing?
+
+Apache Hive is an open source data warehouse system used for querying and analyzing large datasets. Data in Apache Hive can be categorized into Table, Partition, and Bucket. The table in Hive is logically made up of the data being stored. It is of two type such as internal table and external table. Refer this guide to learn what is Internal table and External Tables and the difference between both. Let us now discuss the Partitioning and Bucketing in Hive in detail-
+
+*.Partitioning – Apache Hive organizes tables into partitions for grouping same type of data together based on a column or partition key. Each table in the hive can have one or more partition keys to identify a particular partition. Using partition we can make it faster to do queries on slices of the data.
+*.Bucketing – In Hive Tables or partition are subdivided into buckets based on the hash function of a column in the table to give extra structure to the data that may be used for more efficient queries.
+
+#### Comparison between Hive Partitioning vs Bucketing
+
+We have taken a brief look at what is Hive Partitioning and what is Hive Bucketing. You can refer our previous blog on Hive Data Models for the detailed study of Bucketing and Partitioning in Apache Hive.
+
+In this section, we will discuss the difference between Hive Partitioning and Bucketing on the basis of different features in detail-
+
+##### Partitioning and Bucketing Commands in Hive
+
+*.Partitioning
+
+The Hive command for Partitioning is:
+```sql
+CREATE TABLE table_name (column1 data_type, column2 data_type) PARTITIONED BY (partition1 data_type, partition2 data_type,….);
+```
+
+*.Bucketing
+The Hive command for Bucketing is:
+
+```sql
+CREATE TABLE table_name PARTITIONED BY (partition1 data_type, partition2 data_type,….) CLUSTERED BY (column_name1, column_name2, …) SORTED BY (column_name [ASC|DESC], …)] INTO num_buckets BUCKETS;
+```
+
+##### Apache Hive Partitioning and Bucketing Example
+
+*.Hive Partitioning Example
+
+For example, we have a table employee_details containing the employee information of some company like employee_id, name, department, year, etc. Now, if we want to perform partitioning on the basis of department column. Then the information of all the employees belonging to a particular department will be stored together in that very partition. Physically, a partition in Hive is nothing but just a sub-directory in the table directory.
+
+For example, we have data for three departments in our employee_details table – Technical, Marketing and Sales. Thus we will have three partitions in total for each of the departments as we can see clearly in diagram below. For each department we will have all the data regarding that very department residing in a separate sub – directory under the table directory.
+
+
+
+
+
+
+So for example, all the employee data regarding Technical departments will be stored in user/hive/warehouse/employee_details/dept.=Technical. So, the queries regarding Technical employee would only have to look through the data present in the Technical partition.
+
+Therefore from above example, we can conclude that partitioning is very useful. It reduces the query latency by scanning only relevant partitioned data instead of the whole data set.
+
+*.Hive Bucketing Example
+
+Hence, from the above diagram, we can see that how each partition is bucketed into 2 buckets. Therefore each partition, says Technical, will have two files where each of them will be storing the Technical employee’s data
+
+##### Advantages and Disadvantages of Hive Partitioning & Bucketing
+
+Let us now discuss the pros and cons of Hive partitioning and Bucketing one by one-
+
+*.`Pros and Cons of Hive Partitioning`
+
+*Pros:*
+
+1.It distributes execution load horizontally.
+2.In partition faster execution of queries with the low volume of data takes place. For example, search population from Vatican City returns very fast instead of searching entire world population.
+
+*Cons:*
+
+1.There is the possibility of too many small partition creations- too many directories.
+2.Partition is effective for low volume data. But there some queries like group by on high volume of data take a long time to execute. For example, grouping population of China will take a long time as compared to a grouping of the population in Vatican City.
+3.There is no need for searching entire table column for a single record.
+
+*.`Pros and Cons of Hive Bucketing`
+
+*Pros:*
+
+1.It provides faster query response like portioning.
+2.In bucketing due to equal volumes of data in each partition, joins at Map side will be quicker.
+
+*Cons:*
+
+1.We can define a number of buckets during table creation. But loading of an equal volume of data has to be done manually by programmers.
+
+#### Conclusion
+In conclusion to Hive Partitioning vs Bucketing, we can say that both partition and bucket distributes a subset of the table’s data to a subdirectory. Hence, Hive organizes tables into partitions. And it subdivides partition into buckets. 
+
