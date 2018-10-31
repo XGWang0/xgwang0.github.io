@@ -13,7 +13,7 @@ author: Root Wang
 
 MapReduce讲的就是分而治之的程序处理理念，把一个复杂的任务划分为若干个简单的任务分别来做。另外，就是程序的调度问题，哪些任务给哪些Mapper来处理是一个着重考虑的问题。MapReduce的根本原则是信息处理的本地化，哪台PC持有相应要处理的数据，哪台PC就负责处理该部分的数据，这样做的意义在于可以减少网络通讯负担。
 
-
+![](https://github.com/XGWang0/wiki/raw/master/_images/mapreduce_strucutre_workflow_1.jpg)
 
 
 
