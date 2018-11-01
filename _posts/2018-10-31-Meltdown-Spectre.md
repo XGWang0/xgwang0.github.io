@@ -129,3 +129,13 @@ Hardware. We have empirically verified the vulnerabilityof several Intel process
 
 ### Meltdown VS Spectre
 Meltdown [47] is a related microarchitectural attack whichexploits out-of-order execution to leak kernel memory. Meltdownis distinct from Spectre attacks in two main ways. First,unlike Spectre, Meltdown does not use branch prediction.Instead, it relies on the observation that when an instructioncauses a trap, following instructions are executed out-oforderbefore being terminated. Second, Meltdown exploits avulnerability specific to many Intel and some ARM processorswhich allows certain speculatively executed instructions tobypass memory protection. Combining these issues, Meltdownaccesses kernel memory from user space. This access causes atrap, but before the trap is issued, the instructions that followthe access leak the contents of the accessed memory througha cache covert channel.In contrast, Spectre attacks work on a wider range of processors,including most AMD and ARM processors. Furthermore,the KAISER mechanism [29], which has been widely appliedas a mitigation to the Meltdown attack, does not protect againstSpectre.
+
+
+### Spectre v1 Mitigation:
+Spectre v1 mitigation 目前基于软件实现去屏蔽speculative执行路径，此方案不需要更改任何硬件。 但是目前无法指导此问题是否对xen pv产生影响。
+
+### Spectre v2 Mitigation:
+Spectre v2 mitigation 需要更新microcode去得以解决， 目前增加了Indirect Branch Restricted Speculation (IBRS), Indirect Branch Prediction Barrier (IBPB), and Single Thread Indirect Branch Predictors (STIBP) to CPUID through new MSRs (Model-Specific Register)。此MSRs 以SPEC_CTRL MSR命名以方便澄清。在这些CPU（Skylake -vs- IvyBridge -vs- Nehalem）上， IBRS and IBPB 存在性能下降的问题。 去解决性能问题，要使用急于`软件`的Mitigation（such as retpolines）并且软件的Mitigation不需要`硬件的feature支持`.
+
+对于某些情况，基于软件的Mitigation可能也会导致性能下降。所以大部分的spectre V2 Mitigation通过硬件，软件组合的方式去解决Spectre V2和性能的问题。
+
