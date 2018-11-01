@@ -150,6 +150,7 @@ Spectre V4 Mitigation 需要disable 处理器“Memory Disambiguation” 功能�
 ### Meltdown：
 
 Meltdown 只影响intel CPUs， 其解决方法是通过调用 Kernel Page Table Isolation (KPTI) 在bare machine 和 KVM or Xen Page Table Isolation (XPTI) 在xen环境下，当代码执行期间，此方法会从用户空间unmap 内核地址空间。 KPTI/XPTI 会有较明显的性能下降。 通过使用Process-Context Identifiers (PCID) and Invalidate Process-Context Identifiers (INVPCID) 硬件功能可以有效的减少性能下降。 目前PCID在xen环境中无法被支持 (PCID support in XPTI is expected in the near future.)
+note: Meltdown 不会被在guest内部使用去攻击host或者其他guest.
 
 ### L1TF (L1 Terminal Fault)
 L1TF是speculative execution side channel cache timing漏洞，其影响intel的微架构，并且支持SGX（side-channel attack）。其主要是访问L1（内存池，保存处理器接下来要执行的数据）。 L1TF也会影响虚拟机，它会绕过Extended Page Table (EPT) 保护机制而获取其他程序的信息。Mitigation需要增加micorcode（硬件） 的L1Flush能力，允许主动刷新L1; 在软件方面可以使用Core Scheduling去减少漏洞发生; 在较老的机器上，推荐使用Hyper Threading. L1TF会影响整体性能。
