@@ -20,14 +20,26 @@ In this work, we present Meltdown1. Meltdown is anovel attack that allows overco
 
 While side-channel attacks typically require very specificknowledge about the target application and are tailoredto only leak information about its secrets, Meltdownallows an adversary who can run code on the vulnerableprocessor to obtain a dump of the entire kerneladdress space, including any mapped physical memory.`The root cause of the simplicity and strength of Meltdownare side effects caused by out-of-order execution.`
 
+#### Software Guard eXtensions (SGX):
+Intel Software Guard eXtensions (SGX) 是现代Intel处理器的一个特征，允许应用创建enclave，enclave可以理解为一个数据运行的安全环境，我们可以称它为“小黑匣”。SGX对于软件的保护并不是识别或者隔离系统中出现的恶意软件，而是将合法软件对于敏感数据（如加密密钥、密码、用户数据等）的操作封装在一个“小黑匣”中，使得恶意软件无法对这些数据进行访问。
+
 enclave : 用户空间运行环境
 sid-channel attacks : 
 
 威胁模型:
+俄亥俄州立大学的六位科学家组成的研究小组揭示了一种新型的攻击技术。研究小组表示，被命名为“SgxSpectre”的新型攻击技术可以从英特尔SGX建立的“小黑匣”中提取数据。
+
+研究小组表示，SgxSpectre的工作原理基于软件库中的特定代码模式，这种模式允许开发人员将SGX支持添加到他们的应用程序中。这些脆弱的开发套件包括英特尔SGX SDK、Rust-SGX SDK和Graphene-SGX SDK。
+
+攻击者可以利用这些开发套件在SGX中引入的重复代码执行模式来观察缓存大小的细微变化，进而推断出“小黑匣”中存储的敏感数据。这属于一种典型的“边信道攻击（side-channel attack，SCA） ”，并且非常有效。
+
+研究小组强调，SgxSpectre攻击可以完全破坏SGX的 “小黑匣”的机密性。由于开发套件运行时库中存在易受攻击的代码模式，因此任何使用英特尔官方SGXSDK开发的代码都将受到SgxSpectre攻击的影响，这与“小黑匣”的实施无关。
+
+
 
 侧信道攻击主要目标是攻击enclave数据的机密性（confidentiality）。攻击者来自non-enclave 部分，包括应用程序和系统软件。系统软件包括OS，hypervisor，SMM，BIOS 等特权级软件。
 
-侧信道攻击一般假设攻击者知道enclave 初始化时候的代码和数据，并且知道内存布局。内存布局包括虚拟地址，物理地址以及他们之间的映射关系。有些侧信道攻击假设攻击者知道enclave 的输?数据，并且可以反复触发enclave，进行多次观察记录。侧信道攻击还假设攻击者知道运行enclave 平台的硬件配置、特性和性能，比如CPU，TLB，cache，DRAM，页表，中断以及异常等各种系统底层机制。
+侧信道攻击一般假设攻击者知道enclave 初始化时候的代码和数据，并且知道内存布局。内存布局包括虚拟地址，物理地址以及他们之间的映射关系。有些侧信道攻击假设攻击者知道enclave 的输入数据，并且可以反复触发enclave，进行多次观察记录。侧信道攻击还假设攻击者知道运行enclave 平台的硬件配置、特性和性能，比如CPU，TLB，cache，DRAM，页表，中断以及异常等各种系统底层机制。
 
 侧信道的攻击面:
 enclave 和non-enclave共享大量的系统资源，这就给侧信道攻击留下了非常大的攻击面。经过对现有资料的总结和系统结构的分析，我们把SGX的攻击总结在图2里面。
@@ -163,3 +175,125 @@ L1TF是speculative execution side channel cache timing漏洞，其影响intel的
 |Spectre v4 | kernel/hypervisor （prctl(), seccomp) | updated microcode (SSBD) |
 |Meltdown   | KPTI, XPTI | PCID, INVPCID |
 |L1TF       |Core Scheduling | Updated microcode (L1D_Flush) Disable Sibling Thread |
+
+
+### Enable/Disable Mitigation
+
+|           | Disable(SoftWare) | Disable (HardWare) | Enable (SoftWare) | Enable (HardWare) |
+|Spectre v1 | nospectre_v2 | nospec (SLE12 and earlier)/nospectre_v2 |  Default | Default|
+|Spectre v2 | nospectre_v2 | nospec (SLE12 and earlier)/nospectre_v2 | spectre_v2=on/auto/retpoline/retpoline,generic/retpoline,amd | spectre_v2=ibrs (Only for SLE15) |
+|Spectre v3 |  nospectre_v2 | nospec (SLE12 and earlier)/nospectre_v2 | Default | Default |
+|Spectre v4 | ucode + nospec_store_bypass_disable/spec_store_bypass_disable=off | ucode + nospec_store_bypass_disable/spec_store_bypass_disable=off/seccomp/prctl | spec_store_bypass_disable=on/auto | -- |
+|Meltdown   | nopti | nopti/pti=off | pti=on/auto | pti=on/auto|
+|L1TF       | on in file /sys/devices/system/cpu/smt/control | -- |nosmt/nosmt=force/(off/forceoff/notsupported in control file) | nosmt/nosmt=force/(off/forceoff/notsupported in control file) | 
+
+*Details for each vulnerability:*
+
+#### Spectre v2 mitigation (for x86_64 environments)
+
+*.Hardware-based Spectre v2 mitigation can be completely disabled using the kernel parameter nospec. (SLE12 and earlier)
+*.ALL Spectre v2 mitigation (IBRS, IBPB, retpolines, etc.) can be completely disabled using the nospectre_v2 kernel commandline
+parameter.
+*.Software-based Spectre v2 can also be tuned using the "spectre_v2" kernel commandline parameter:
+
+`spectre_v2`=<VALUE>
+<VALUE> :
+**.on - unconditionally enable the mitigation
+**.off - unconditionally disable the mitigation (same as nospectre_v2)
+**.auto- kernel detects whether your CPU model is vulnerable (default)
+
+Selecting on will, and auto may, choose a mitigation method at run time according to the CPU, the available microcode, the setting of the CONFIG_RETPOLINE configuration option, and the compiler with which the kernel was built.
+
+Specific mitigation implementations can also be selected manually:
+**.retpoline - replace indirect branches
+**.retpoline,generic - google’s original retpoline
+**.retpoline,amd - AMD-specific minimal thunk
+**.ibrs - Force IBRS support (SLE15 only)
+
+### Spectre v4 mitigation (for x86_64 environments)
+*.Spectre v4 mitigation requires disabling the "Memory Disambiguation" feature of the processor. This can be done system-wide, or selectively for individual processes.
+*.Intel x86 systems require updated CPU microcode to allow disabling "Memory Disambiguation".
+*.Spectre v4 mitigation can be completely disabled using the kernel parameter nospec_store_bypass_disable.
+*.Spectre v4 mitigation is enabled/disabled/tuned using the spec_store_bypass_disable kernel commandline parameter:
+`spec_store_bypass_disable`=<VALUE>
+
+<VALUE> :
+*.auto - mitigation is enabled by default when needed, prctl() is enabled for per-process selection and seccomp users are also enabled.
+*.on - unconditionally enable the mitigation system-wide.
+*.off - unconditionally disable the mitigation (same as nospec_store_bypass_disable).
+*.seccomp - system-wide mitigation is disabled, but can be enabled by user programs through the prctl() system call, and is default enabled for applications using seccomp filtering (such as openssh, vsftpd and firefox and chromium).
+*.prctl - system-wide mitigation is disabled, but can be enabled by user programs through the prctl() system call.
+
+### Mitigations in KVM Environments
+
+KVM hosts operate as normal, bare-metal machines and inherit both software and hardware based mitigation through support for these features in the hardware and the normal SUSE Linux kernel.
+
+KVM guests can utilize software-based mitigation if the operating system
+within the guest supports this approach. (SUSE Linux guests have such
+mitigation in recently released kernels. Third party operating system
+mitigation must be verified with the third party vendor.) Hardware-based
+mitigation within a KVM guest depends on the hardware features (e.g.
+SPEC_CTRL for Spectre v2, and (for decreased performance degradation)
+PCID/INVPCID for Meltdown) being available on the host, and being
+presented to the guest operating system. Passing `SPEC_CTRL`, `PCID` and
+`INVPCID` CPU flags to a KVM guest is performed by `qemu`, and based on
+the CPU configuration `qemu` presents to the guest. Features available
+with specific CPU models can be verified through the `libvirt-libs`
+provided file `/usr/share/libvirt/cpu_map.xml`. (NOTE - a QEMU update
+may be required to pass `SPEC_CTRL` to KVM guests.)
+
+
+#### KVM Host/Guest Vulnerabilities
+
+he following table describes which mitigations are potentially required
+to secure specific attack vectors on KVM hosts and guests:
+
+[cols="h,3*",options="header"]
+|===
+|
+|Bare Metal/KVM Host +
+(within machine)
+|KVM Guest to Host/Guests +
+(across machines)
+|KVM Guest +
+(within machine)
+
+|Spectre v1
+|Required
+|Required
+|Required
+
+|Spectre v2
+|Required
+|Required
+|Required
+
+|Spectre v3a
+|Required
+|Required
+|Required
+
+|Spectre v4
+|Required
+|Required
+|Required
+
+|Meltdown
+|Required
+|Not Required
+|Required
+
+|L1TF
+|Required
+|Required
+|Required
+|===
+
+* "within machine" - Attacks that are confined to memory within
+a single physical or virtual machine.
+
+* "across machines" - Attacks that are launched from one virtual machine,
+and access memory assigned to the hypervisor or another virtual machine.
+
+
+
