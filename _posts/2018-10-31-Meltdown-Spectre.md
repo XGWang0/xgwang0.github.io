@@ -295,5 +295,7 @@ a single physical or virtual machine.
 * "across machines" - Attacks that are launched from one virtual machine,
 and access memory assigned to the hypervisor or another virtual machine.
 
+#### Implementing Mitigations in KVM Hosts and Guests
+
 
 
