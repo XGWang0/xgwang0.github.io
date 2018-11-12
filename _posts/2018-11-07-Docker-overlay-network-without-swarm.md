@@ -90,9 +90,11 @@ Delegate=yes
 # Add following info to /etc/default/docker or /etc/sysconfig/docker which defined by variable EnvironmentFile in device.server
 DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-advertise {Docker Host[2,3] network interface/ip addr}:2375 --cluster-store consul://{Docker Host 1 IP Address}:8500"
 
-Sample :
+Sample for consul:
 DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-advertise eth0:2375 --cluster-store consul://10.67.19.84:8500 "
 
+Sample for zookeeper:
+DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-advertise eth0:2375 --cluster-store zk://10.67.19.84:8500 "
 ```
 
 4. Check cluster related option 
