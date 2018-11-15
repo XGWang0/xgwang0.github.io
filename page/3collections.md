@@ -27,6 +27,10 @@ type: page
 
 * [Spark learning](https://www.cnblogs.com/qingyunzong/p/8899715.html)
 
+### Network
+
+* [openvswith vxlan](https://rahulait.wordpress.com/2014/08/17/using-openvswitch-to-communicate-between-two-different-hosts-on-different-machines/)
+
 
 ## 工具
 
