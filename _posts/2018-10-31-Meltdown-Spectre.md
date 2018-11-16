@@ -9,6 +9,27 @@ author: Root Wang
 * content
 {:toc}
 
+Spectre v1 : out of order execution
+Spectre v2 : indirect branch
+Spectre v3/meltdown
+Spectre v3a : Systems with microprocessors utilizing speculative execution and that perform speculative reads of system registers may allow unauthorized disclosure of system parameters to an attacker with local user access via a side-channel analysis. 
+
+Spectre v4 : Systems with microprocessors utilizing speculative execution and speculative execution of memory reads before the addresses of all prior memory writes are known may allow unauthorized disclosure of information to an attacker with local user access via a side-channel analysis. 
+
+* [Spectre v3a & v4](https://www.phoronix.com/scan.php?page=news_item&px=Spectre-V3-V4-Vulnerabilities)
+
+L1TF : If the present bit in a given PTE is not set, the PFN number field of that PTE has no defined meaning and the CPU has no business trying to use it. So, naturally, Intel CPUs do exactly that during speculative execution (it would appear that Intel is the only vendor to make this particular mistake). During speculative execution, non-present PTEs are treated as if they were valid, so non-present PTEs can be used to speculatively read whatever data lives in the indicated PFN — but, importantly, only if that data is in the processor's L1 cache. The access is speculative only; the processor will eventually notice that the page is not actually present and generate a page fault instead. But, by the time that happens, the usual sorts of covert channels can be used to exfiltrate the data in whatever page the PTE might have pointed to.
+
+* [L1TF](https://lwn.net/Articles/762570/)
+* [L1TF](https://access.redhat.com/security/vulnerabilities/L1TF)
+
+Portsmash : he attack works by running a malicious process next to legitimate ones using SMT's parallel thread running capabilities. The malicious PortSmash process than leaks small amounts of data from the legitimate process, helping an attacker reconstruct the encrypted data processed inside the legitimate process.
+
+
+
+
+
+
 ## Meltdown
 
 Meltdown breaks the most fundamental isolation between `user applications` and `the operating system`. This attack allows a program to access the memory, and thus also the secrets, of other programs and the operating system.
