@@ -32,6 +32,10 @@ type: page
 * [openvswith vxlan](https://rahulait.wordpress.com/2014/08/17/using-openvswitch-to-communicate-between-two-different-hosts-on-different-machines/)
 
 
+### Meltdown & Spectre
+
+* [Spark learning](https://www.us-cert.gov/ncas/alerts/TA18-141A)
+
 ## 工具
 
 * [Markdown Syntax](https://www.jianshu.com/p/b03a8d7b1719)
