@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Hive Installation And Using"
+title:  "Hive Table Design"
 categories: hive
 tags:  bigdata HA cluster hive mapreduce
 author: Root Wang

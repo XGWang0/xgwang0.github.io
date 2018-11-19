@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  "Hive Installation And Using"
-categories: hive
-tags:  bigdata HA cluster hive mapreduce
+title:  "Meltdown & Spectre"
+categories: mitigation
+tags:  meltdown spectre
 author: Root Wang
 ---
 

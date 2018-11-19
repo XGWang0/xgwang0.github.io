@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  "Hive Installation And Using"
+title:  "Process Thread, LWP(light weight process)"
 categories: hive
-tags:  bigdata HA cluster hive mapreduce
+tags:  process thread lwp
 author: Root Wang
 ---
 
