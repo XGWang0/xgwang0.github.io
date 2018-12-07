@@ -1,0 +1,18 @@
+###
+# kubernetes kubelet (minion) config
+
+# The address for the info server to serve on (set to 0.0.0.0 or "" for all interfaces)
+#KUBELET_ADDRESS="--address=127.0.0.1"
+
+# The port for the info server to serve on
+# KUBELET_PORT="--port=10250"
+
+# You may leave this blank to use the actual hostname
+KUBELET_HOSTNAME="--hostname-override=10.67.19.191"
+
+# location of the api-server
+#KUBELET_API_SERVER="--api-servers=http://10.67.18.8:8080"
+KUBELET_API_SERVER="--api-servers=https://10.67.18.8:6443 --kubeconfig=/etc/kubernetes/kubeconfig"
+
+# Add your own!
+#KUBELET_ARGS="--pod-manifest-path=/etc/kubernetes/manifests"

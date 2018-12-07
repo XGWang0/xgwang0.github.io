@@ -1,0 +1,9 @@
+###
+# The following values are used to configure the kubernetes controller-manager
+
+# defaults from config and apiserver should be adequate
+
+# Add your own!
+#KUBE_CONTROLLER_MANAGER_ARGS="--master=http://10.67.18.8:8080 --logtostderr=false --log-dir=/var/log/kubernetes --v=2 "
+KUBE_CONTROLLER_MANAGER_ARGS="--address=127.0.0.1 --logtostderr=false --log-dir=/var/log/kubernetes --v=0 --service-account-private-key-file=/john/k8s/CA/server.key --root-ca-file=/john/k8s/CA/ca.crt --kubeconfig=/etc/kubernetes/kubeconfig"
+#KUBE_CONTROLLER_MANAGER_ARGS="--master=https://10.67.18.8:6443 --logtostderr=false --log-dir=/var/log/kubernetes --v=2 --service-account-private-key-file=/john/k8s/CA/server.key --root-ca-file=/john/k8s/CA/ca.crt --kubeconfig=/etc/kubernetes/kubeconfig"

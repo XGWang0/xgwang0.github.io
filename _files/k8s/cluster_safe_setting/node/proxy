@@ -1,0 +1,7 @@
+###
+# kubernetes proxy config
+
+# default config should be adequate
+
+# Add your own!
+KUBE_PROXY_ARGS="--master=https://10.67.18.8:6443 --kubeconfig=/etc/kubernetes/kubeconfig"
