@@ -167,7 +167,7 @@ controller-manager   Healthy   ok
 scheduler            Healthy   ok                   
 etcd-0               Healthy   {"health": "true"}
 
-### Node CA setting
+### Node CA setting (HostB)
 
 #### Setting client CA private key for kubelet
 
@@ -218,6 +218,10 @@ KUBELET_API_SERVER="--api-servers=https://10.67.18.8:6443 --kubeconfig=/etc/kube
 
 4.Restart kubelet server
 
+
+
+
+
 #### Set proxy server
 1.File /etc/kubernetes/proxy
 ```doc
@@ -239,4 +243,21 @@ NAME           STATUS     AGE       VERSION
 127.0.0.1      NotReady   1d        v1.6.1
 ```
 
+### Node CA setting (HostB)
 
+#### Set kubelet server on localhost
+In File /etc/kubernetes/kubelet
+```doc
+KUBELET_HOSTNAME="--hostname-override=127.0.0.1"
+
+# location of the api-server , `--kubeconfig=/etc/kubernetes/kubeconfig` kubeconfig file is shared with controller-manager,scheduler
+KUBELET_API_SERVER="--api-servers=https://10.67.18.8:6443 --kubeconfig=/etc/kubernetes/kubeconfig"
+
+```
+Note: controller-manager,scheduler,kubelet,proxy share the kubeconfig, namely /etc/kubernetes/kubeconfig
+
+#### Set proxy server on localhost
+In File /etc/kubernetes/proxy
+```doc
+KUBE_PROXY_ARGS="--master=https://10.67.18.8:6443 --kubeconfig=/etc/kubernetes/kubeconfig"
+```
