@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-wq-1
+spec:
+  #completions: 4
+  parallelism: 2
+  template:
+    metadata:
+      name: job-wq-1
+    spec:
+      containers:
+      - name: c
+        image: john1wang/job-wq-1:latest
+        #command: ["/bin/bash", "-c", "echo tttttttttttttttttt & sleep 100"]
+        command: ["/usr/bin/amqp-consume", "--url=amqp://guest:guest@10.254.244.224:5672", "-q", "job1", "-c", "1", "/worker.py"]
+        env:
+        - name: BROKER_URL
+          value: amqp://guest:guest@10.254.244.224:5672
+        - name: QUEUE
+          value: job1
+      restartPolicy: OnFailure
+      nodeSelector:
+        nodename: local
