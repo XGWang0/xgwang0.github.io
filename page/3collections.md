@@ -11,6 +11,11 @@ type: page
 
 ## Platform
 
+
+### K8S
+
+* [ Deployment ](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+
 ### Docker
 
 * [ Docker & Kubernetes ](http://qinghua.github.io/)
