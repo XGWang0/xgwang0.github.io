@@ -43,9 +43,9 @@ if __name__ == '__main__':
 
 `Iteration`：is a general term for taking each item of something, one after another. Any time you use a loop, explicit or implicit, to go over a group of items, that is iteration.
 
-`iterable`： is an object that has an `__iter__` method which returns an `iterator`, or which defines a `__getitem__` method that can take sequential indexes starting from zero (and raises an IndexError when the indexes are no longer valid). So an `iterable` is an object that you can get an `iterator` from.
+`iterable`： is an object that has an `__iter__` method which returns an `iterator`, or which defines a `__getitem__` method that can take sequential indexes starting from zero (and raises an IndexError when the indexes are no longer valid). So an `iterable` is an object that you can get an `iterator` from. 或者说迭代器是有一个`next（）`方法的对象。
 
-`iterator`： is an object with a next (Python 2) or __next__ (Python 3) method.
+`iterator`： is an object with `__iter__` and a `next()` (Python 2) or `__next__` (Python 3) method.
 
 当创建一个list。一个一个读取list item的过程就叫迭代过程（Iteration）
 ```python
@@ -67,6 +67,38 @@ if __name__ == '__main__':
 4
 ```
 这些`iterable`可以根据你的意愿尽可能多的读取其item，但是`所有的items被存储在内存中`。
+
+
+```python
+lass Fib:
+    def __init__(self, n):
+        self.prev = 0
+        self.cur = 1
+        self.n = n
+
+    def __iter__(self):
+        return self
+
+    # python3 use next()
+    def __next__(self):
+        if self.n > 0:
+            value = self.cur
+            self.cur = self.cur + self.prev
+            self.prev = value
+            self.n -= 1
+            return value
+        else:
+            raise StopIteration()
+    # 兼容python2
+    def next(self):
+        return self.next()
+
+f = Fib(10)
+print([i for i in f])
+
+#[1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+```
+
 
 #### 生成器（Generators）
 生成器是一个迭代器（iterator）， 一种类型的（iterable）,`只可以迭代一次(you can only iterate over once)`. 生成器不会把所有的值存储在内存中，他们会在运行中生成值（`they generate the values on the fly`）
