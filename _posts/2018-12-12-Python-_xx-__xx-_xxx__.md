@@ -233,3 +233,33 @@ c.modify(2)
 __setattr__ !
 __setattr__ !
 ```
+
+#### __hash__()
+如果类中实现了此方法，并且此方法返回不可变的值，即可哈希的。其实例可以作为`dict的键值`， 否则不可以
+
+```python
+>>> class HashTest(object):
+...     def __hash__(self):
+...         return []
+
+---------
+
+>>> class HashTest1(object):
+...     def __hash__(self):
+...         return 'aa'
+
+----
+
+>>> a = dict()
+>>> a[HashTest] = 'aaaaaa'
+>>> a[HashTest()] ='bbbbb'
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: an integer is required
+>>> a[HashTest1] ='ccccccc'
+>>> a[HashTest1()] ='ddddd'
+
+>>> a.keys()
+[<class '__main__.HastTest'>, <class '__main__.HastTest1'>, <__main__.HastTest1 object at 0x7f28d7fc30d0>]
+```
+
