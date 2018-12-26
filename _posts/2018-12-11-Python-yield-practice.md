@@ -112,6 +112,8 @@ print([i for i in f])
 ```
 It is just the same except you used () instead of []. BUT, you cannot perform for i in mygenerator a second time since generators can only be used once: they calculate 0, then forget about it and calculate 1, and end calculating 4, one by one
 
+![](https://github.com/XGWang0/wiki/raw/master/_images/interable_generator.jpg)
+
 #### Yield
 yield 就像函数`return`, 只是包含有`yield`函数的`function`将会返回一个生成器，而不是function本身.
 ```python
@@ -264,3 +266,6 @@ $100
 $100
 ...
 ```
+
+
+
