@@ -217,42 +217,74 @@ def outer():
     inner() # 2  
   
 outer()  
+
+Result:
+1
 ```
 
-相信大家都知道输出是什么了，输出是1，了解了Python变量的作用域就很容易正确判断函数嵌套的输出啦，不过我还是想多啰嗦两句：
+解析：
 1. #1的地方，python寻找名为x的local变量，在inner作用域内的locals中寻找不到，python就在外层作用域中寻找，其外层是outer函数。x是定义在outer作用域范围内的local变量。
 2. #2的地方，调用了inner函数。这里需要特别注意：inner也只是一个变量名，是遵循python的变量查找规则的（Python先在outer函数的作用域中寻找名为inner的local变量）
-4、闭包
+
+
+### 闭包
+General points:
+
+#闭包的词法环境会被存储，通过fuc.__closure__可以获得
+1. Closured lexical environments are stored in the property __closure__ of a function
+
+# 闭包必须引用自由变量。（自由变量为非gloabl，非local的变量）
+2. If a function does not use free variables it doesn\'t form a closure
+
+# 更深层次的嵌套函数引用的其上层函数的自由变量（非父层）， 所有先前层次的嵌套函数都将保存其词法环境. 参考`示例2`
+3. However, if there is another inner level which uses free variables -- *all* previous levels save the lexical environment
+
+4. Property __closure__ of *global* functions is None, since a global function may refer global variables (which are also free in this case for the function) via "globals()"
+
+5. By default, if there is an *assignment* to the identifier with the same name as a closured one, Python creates a *local variable*, but not modifies the closured one. To avoid it, use `nonlocal` directive, specifying explicitly that the variable is free (closured).  (Thanks to @joseanpg). See also http://www.python.org/dev/peps/pep-3104/
+
 闭包的原理我们直接通过下面的例子来解释：
+
+```python
 def outer():  
     x = 1  
     def inner():  
         print x # 1  
     return inner  
 foo = outer()  
+#python2
 print foo.func_closure #2 doctest: +ELLIPSIS  
-  
+
+###python3
+print(foo.__closure__)
 foo()  
 
 输出为：
 (<cell at 0x189da2f0: int object at 0x188b9d08>,)
 1
+```
 
 在这个例子中，我们可以看到inner函数作为返回值被outer返回，然后存储在foo变量中，我们可以通过foo()来调用它。但是真的可以跑起来吗？让我们来关注一下作用域规则。
-python里运行的东西，都按照作用域规则来运行。
 
-x是outer函数里的local变量
-在#1处，inner打印x时，python在inner的locals中寻找x，找不到后再到外层作用域（即outer函数）中寻      找，找到后打印。
+**python里运行的东西，都按照作用域规则来运行**
 
-看起来一切OK，那么从变量生命周期（lifetime）的角度看，会发生什么呢：
+* x是outer函数里的local变量
+* 在#1处，inner打印x时，python在inner的locals中寻找x，找不到后再到外层作用域（即outer函数）中寻找，找到后打印。
 
-x是outer的local变量，这意味着只有outer运行时，x才存在。那么按照python运行的模式，我们不能在         outer结束后再去调用inner。
-在我们调用inner的时候，x应该已经不存在了。应该发生一个运行时错误或者其他错误。
+**看起来一切OK，那么从变量生命周期（lifetime）的角度看，会发生什么呢：**
+
+* x是outer的local变量，这意味着只有outer运行时，x才存在。
+* 那么按照python运行的模式，我们不能在`outer结束后再去调用inner`。
+* 在我们调用inner的时候，x应该已经不存在了。应该发生一个运行时错误或者其他错误。
+
 但是这一些都没有发生，inner函数依旧正常执行，打印了x。
 
-Python支持一种特性叫做函数闭包（function closures）：在非全局（global）作用域中定义inner函数（即嵌套函数）时，会记录下它的嵌套函数namespaces（嵌套函数作用域的locals），可以称作：定义时状态，可以通过func_closure 这个属性来获得inner函数的外层嵌套函数的namespaces。(如上例中#2，打印了func_closure ，里面保存了一个int对象，这个int对象就是x)
-注意：每次调用outer函数时，inner函数都是新定义的。上面的例子中，x是固定的，所以每次调用inner函数的结果都一样。
+**Python支持一种特性叫做函数闭包（function closures）：**
+在非全局（global）作用域中定义inner函数（即嵌套函数）时，`会记录下它的嵌套函数namespaces（嵌套函数作用域的locals）`，可以称作：`定义时状态`，可以通过func_closure 这个属性来获得inner函数的`外层函数的namespaces`(如上例中#2，打印了func_closure ，里面保存了一个int对象，这个int对象就是x)
+
+***注意：每次调用outer函数时，inner函数都是新定义的。上面的例子中，x是固定的，所以每次调用inner函数的结果都一样。***
 如果上面的x不固定呢？我们继续来看下面的例子：
+```python
 def outer(x):  
     def inner():  
         print x # 1  
@@ -269,40 +301,308 @@ print2()
 1
 (<cell at 0x147d3360: int object at 0x146b2cf0>,)
 2
-
+```
 在这个例子中，我们能看到闭包实际上是记录了外层嵌套函数作用域中的local变量。通过这个例子，我们可以创建多个自定义函数。
-5、再回首
-说了这么多，相信你们都知道文章一开始的错误怎么修正了，同时也知道为什么报的UnboundLocalError错误了。我们只需要生命nonlocal关键词让内部函数使用E作用域中的变量就好啦：
-class Solution(object):
-    def longestPalindrome(self, s):
-        """
-        :type s: str
-        :rtype: str
-        """
-        if len(s) < 2:
-            return s
-        maxlen = 0
-        res = ''
-        def extendPalidrome(j, k):
-            while j >= 0 and k < len(s) and s[j] == s[k]:
-                j = j - 1
-                k = k + 1
-                nonlocal maxlen
-                nonlocal res
-            if k - j - 1 > maxlen:
-                maxlen = k - j - 1
-                res = s[j+1:k]
-        for i in range(len(s) - 1):
-            extendPalidrome(i, i)
-            extendPalidrome(i, i + 1)
-        return res
+
+#### 具体示例:
+
+***示例1***
+
+```python
+# Define a function
+def foo(x):
+    # inner function "bar"
+    def bar(y):
+        q = 10
+        # inner function "baz"
+        def baz(z):
+            print("Locals: ", locals())
+            print("Vars: ", vars())
+            return x + y + q + z
+        return baz
+    return bar
+
+# Locals: {'y': 20, 'x': 10, 'z': 30, 'q': 10}
+# Vars: {'y': 20, 'x': 10, 'z': 30, 'q': 10}
+print(foo(10)(20)(30)) # 70
+
+# Explanation:
+
+# ------ 1. Magic property "__closure__" ----------------------------
+
+# All `free variables` (i.e. variables which are
+# neither local vars, nor arguments) of "baz" funtion
+# are saved in the internal "__closure__" property.
+# Every function has this property, though, not every
+# saves the content there (if not use free variables).
+
+# Lexical environment (closure) cells of "foo":
+# ("foo" doesn't use free variables, and moreover,
+# it's a global function, so its __closure__ is None)
+print(foo.__closure__) # None
+
+# "bar" is returned
+bar = foo(10)
+
+# Closure cells of "bar":
+# (
+#     <cell at 0x014E7430: int object at 0x1E1FEDF8>, "x": 10
+# )
+print(bar.__closure__)
+
+# "baz" is returned
+baz = bar(20)
+
+#
+# Closure cells of "bar":
+# (
+#     <cell at 0x013F7490: int object at 0x1E1FEE98>, "x": 10
+#     <cell at 0x013F7450: int object at 0x1E1FEDF8>, "y": 20
+#     <cell at 0x013F74B0: int object at 0x1E1FEDF8>, "q": 10
+# )
+#
+print(baz.__closure__)
+
+# So, we see that a "__closure__" property is a tuple
+# (immutable list/array) of closure *cells*; we may refer them
+# and their contents explicitly -- a cell has property "cell_contents"
+
+print(baz.__closure__[0]) # <cell at 0x013F7490: int object at 0x1E1FEE98>
+print(baz.__closure__[0].cell_contents) # 10 -- this is our closured "x"
+
+# the same for "y" and "q"
+print(baz.__closure__[1].cell_contents) # "y": 20
+print(baz.__closure__[2].cell_contents) # "q": 10
+
+# Then, when "baz" is activated it's own environment
+# frame is created (which contains local variable "z")
+# and merged with property __closure__. The result dictionary
+# we may refer it via "locals()" or "vars()" funtions.
+# Being able to refer all saved (closured) free variables,
+# we get correct result -- 70:
+baz(30) # 70
+
+# ------ 2. Function without free variables does not closure --------
+
+# Let's show that if a function doesn't use free variables
+# it doesn't save lexical environment vars
+def f1(x):
+    def f2():
+        pass
+    return f2
+
+# create "f2"
+f2 = f1(10)
+
+# its __closure__ is empty
+print(f2.__closure__) # None
+
+# ------ 3. A closure is formed if there's most inner function -------
+
+# However, if we have another inner level,
+# then both functions save __closure__, even
+# if some parent level doesn't use free vars
+
+def f1(x):
+    def f2(): # doesn't use free vars
+        def f3(): # but "f3" does
+            return x
+        return f3
+    return f2
+
+# create "f2"
+f2 = f1(200)
+
+# it has (and should have) __closure__
+print(f2.__closure__) # (<cell at 0x014B7990: int object at 0x1E1FF9D8>,)
+print(f2.__closure__[0].cell_contents) # "x": 200
+
+# create "f3"
+f3 = f2()
+
+# it also has __closure__ (the same as "f2")
+print(f3.__closure__) # (<cell at 0x014B7990: int object at 0x1E1FF9D8>,)
+print(f3.__closure__[0].cell_contents) # "x": 200
+print(f3()) # 200
+
+# ------ 4. Global functions do not closure -------------------------
+
+# Global functions also do not save __closure__
+# i.e. its value always None, since may
+# refer via globals()
+global_var = 100
+def global_fn():
+    print(globals()["global_var"]) # 100
+    print(global_var) # 100
+
+global_fn() # OK, 100
+print(global_fn.__closure__) # None
+
+# ------ 5. By default assignment creates a local var. -----------------
+# ------ User `nonlocal` to capture the same name closured variable. ---
+
+# Since assignment to an undeclared identifier in Python creates
+# a new variable, it's hard to distinguish assignment to a closured
+# free variable from the creating of the new local variable. By default
+# Python strategy is to *create a new local variable*. To specify, that
+# we want to update exactly the closure variable, we should use
+# special `nonlocal` directive. However, if a closured variable is of
+# an object type (e.g. dict), it's content may be edited without
+# specifying `nonlocal` directive.
+
+# "x" is a simple number,
+# "y" is a dictionary
+def create(x, y):
+
+    # this simplified example uses
+    # "getX" / "setX"; only for educational purpose
+    # in real code you rather would use real
+    # properties (getters/setters)
+
+    # this function uses
+    # its own local "x" but not
+    # closured from the "create" function
+    def setX(newX):
+        x = newX # ! create just *local* "x", but not modify closured!
+        # and we cannot change it via e.g.
+        # child1.__closure__[0] = dx, since tuples are *immutable*
+
+    # and this one already sets
+    # the closured one; it may then
+    # be read by the "getX" function
+    def setReallyX(newX):
+        # specify explicitly that "x"
+        # is a free (or non-local) variable
+        nonlocal x
+        # and modify it
+        x = newX
+
+    # as mentioned, if we deal with
+    # non-primitive type, we may mutate
+    # contents of an object without `nonlocal`
+    # since objects are passed by-reference (by-sharing)
+    # and we modify not the "y" itself (i.e. not *rebound* it),
+    # but its content (i.e. *mutate* it)
+    def modifyYContent(foo):
+        # add/set a new key "foo" to "y"
+        y["foo"] = foo
+
+    # getter of the "x"
+    def getX():
+        return x
+
+    # getter of the "y"
+    def getY():
+        return y
+
+    # return our messaging
+    # dispatch table
+    return {
+        "setReallyX": setReallyX,
+        "setX": setX,
+        "modifyYContent": modifyYContent,
+        "getX": getX,
+        "getY": getY
+    }
+
+# create our object
+instance = create(10, {})
+
+# "setX" does *not* closure "x" since uses *assignment*!
+# it doesn't closuse "y" too, since doesn't use it:
+print(instance["setX"].__closure__) # None
+
+# do *not* modify closured "x" but
+# just create a local one
+instance["setX"](100)
+
+# test with a getter
+print(instance["getX"]()) # still 10
+
+# test with a "setReallyX", it closures only "x"
+# (
+#     <cell at 0x01448AD0: int object at 0x1E1FEDF8>, "x": 10
+# )
+print(instance["setReallyX"].__closure__)
+instance["setReallyX"](100)
+
+# test again with a getter
+print(instance["getX"]()) # OK, now 100
+
+# "modifyYContent" captrues only "y":
+# (
+#     <cell at 0x01448AB0: dict object at 0x0144D4B0> "y": {}
+# )
+print(instance["modifyYContent"].__closure__)
+
+# we may modify content of the
+# closured variable "y"
+instance["modifyYContent"](30)
+
+print(instance["getY"]()) # {"foo": 30}
+```
 
 
+***示例2***
 
-s = Solution()
-print (s.longestPalindrome('abccbaaeb'))
+```python
 
-作者：石晓文的学习日记
-链接：https://www.jianshu.com/p/17a9d8584530
-來源：简书
-简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。
+==========================================
+def foo(x):
+    # inner function "bar"
+    def bar(y):
+        q = 10
+        w = 20
+        # inner function "bas" do not refer any free variables
+        def bas():
+            def baz(z):
+                return x + y + q + z
+            def bax(a):
+                return w
+            return (bax, baz)
+        return bas
+    return bar
+
+
+bar = foo(10)
+print("bar closure:",bar.__closure__)
+
+bas = bar(20)
+print("bas closure",bas.__closure__)
+
+bax,baz = bas()
+print("bax closure",bax.__closure__)
+print(bax(100))
+
+print("baz closure",baz.__closure__)
+print(baz(30))
+
+#Result:
+=======================
+bar closure: (<cell at 0x7f5e2ce08c18: int object at 0x7f5e2df79bc0>,)
+bas closure (<cell at 0x7f5e2cd7e828: int object at 0x7f5e2df79bc0>, <cell at 0x7f5e2cd7e738: int object at 0x7f5e2df79d00>, <cell at 0x7f5e2ce08c18: int object at 0x7f5e2df79bc0>, <cell at 0x7f5e2b4dbf18: int object at 0x7f5e2df79d00>)
+bax closure (<cell at 0x7f5e2cd7e738: int object at 0x7f5e2df79d00>,)
+20
+baz closure (<cell at 0x7f5e2cd7e828: int object at 0x7f5e2df79bc0>, <cell at 0x7f5e2ce08c18: int object at 0x7f5e2df79bc0>, <cell at 0x7f5e2b4dbf18: int object at 0x7f5e2df79d00>)
+70
+```
+
+*Explanation:*
+1. bar closure: the cell contents is x:10
+   1. Interpreter found the bar does not usr free variables (in foo), so will go through further to inner all funcs.
+   2. Then found the bax, baz used the free variables 
+   3. free variable (outter variables of bar and not global)is x:10 in foo, so, will save lexical environments to bar property.
+
+2. bas closure: the cell contents is x:10, y:20, q=10, w=20
+   1. Interpreter found the bar does not uses free vaiables (in both foo and bar) directly, so will go through further to inner all funcs. 
+   2. Then repeate 1.2
+   3. Found the free variables (all outter variables of bas and not global) w is referenced by bax, x,y,q is referenced by baz. 
+   4. So all 4 free variables are stored to bas closure.
+
+3. bax closure: the cell content is w=20
+   1. Interpreter found the bax use free variable w
+   2. Save w to closure.
+
+4. baz closure: the cell content is x:10, y:20, q=10, (z is local, not free variable)
+   1. Interpreter found the baz use free variable x:10, y:20, q=10
+   2. Save w to closure.
