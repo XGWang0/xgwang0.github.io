@@ -41,6 +41,14 @@ type: page
 
 * [Meltdown & Spectre](https://www.us-cert.gov/ncas/alerts/TA18-141A)
 
+### Python
+
+* [python magic method CN](https://pycoders-weekly-chinese.readthedocs.io/en/latest/issue6/a-guide-to-pythons-magic-methods.html)
+* [python magic method EN 1](https://www.python-course.eu/python3_magic_methods.php)
+* [python magic method EN 2](https://rszalski.github.io/magicmethods/)
+* [python magic method local](https://github.com/XGWang0/wiki/raw/master/_files/magic_method_python/magicmethods.pdf)
+
+
 ## 工具
 
 * [Markdown Syntax](https://www.jianshu.com/p/b03a8d7b1719)
