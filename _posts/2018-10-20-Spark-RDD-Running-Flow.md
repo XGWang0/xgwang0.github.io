@@ -16,7 +16,7 @@ author: Root Wang
 3.SparkContext构建成DAG图，将DAG图分解成Stage，并把Taskset发送给Task Scheduler。Executor向SparkContext申请Task，Task Scheduler将Task发放给Executor运行同时SparkContext将应用程序代码发放给Executor。 
 4.Task在Executor上运行，运行完毕释放所有资源。
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rdd_running_flow1.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rdd_running_flow1.png)
 
 *Spark运行架构特点：*
 
@@ -45,7 +45,7 @@ RDD中不同的操作会使得不同RDD中的分区会产生不同的依赖。RD
 对于窄依赖的RDD，可以以流水线的方式计算所有父分区，不会造成网络之间的数据混合。对于宽依赖的RDD，则通常伴随着Shuffle操作，即首先需要计算好所有父分区数据，然后在节点之间进行Shuffle。
 
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rdd_running_flow2.jpg)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rdd_running_flow2.jpg)
 
 图9-10 窄依赖与宽依赖的区别
 
@@ -56,7 +56,7 @@ Spark的这种依赖关系设计，使其具有了天生的容错性，大大加
 Spark通过分析各个RDD的依赖关系生成了DAG，再通过分析各个RDD中的分区之间的依赖关系来决定如何划分阶段，具体划分方法是：在DAG中进行反向解析，遇到宽依赖就断开，遇到窄依赖就把当前的RDD加入到当前的阶段中；将窄依赖尽量划分在同一个阶段中，可以实现流水线计算（具体的阶段划分算法请参见AMP实验室发表的论文《Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing》）。例如，如图9-11所示，假设从HDFS中读入数据生成3个不同的RDD（即A、C和E），通过一系列转换操作后再将计算结果保存回HDFS。对DAG进行解析时，在依赖图中进行反向解析，由于从RDD A到RDD B的转换以及从RDD B和F到RDD G的转换，都属于宽依赖，因此，在宽依赖处断开后可以得到三个阶段，即阶段1、阶段2和阶段3。可以看出，在阶段2中，从map到union都是窄依赖，这两步操作可以形成一个流水线操作，比如，分区7通过map操作生成的分区9，可以不用等待分区8到分区9这个转换操作的计算结束，而是继续进行union操作，转换得到分区13，这样流水线执行大大提高了计算的效率。
 
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rdd_running_flow3.jpg)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rdd_running_flow3.jpg)
 
 图9-11根据RDD分区的依赖关系划分阶段
 
@@ -68,7 +68,7 @@ Spark通过分析各个RDD的依赖关系生成了DAG，再通过分析各个RDD
 （2）SparkContext负责计算RDD之间的依赖关系，构建DAG；
 （3）DAGScheduler负责把DAG图分解成多个阶段，每个阶段中包含了多个任务，每个任务会被任务调度器分发给各个工作节点（Worker Node）上的Executor去执行。
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rdd_running_flow6.jpg)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rdd_running_flow6.jpg)
 
 ### DAG
 
@@ -76,14 +76,14 @@ Spark通过分析各个RDD的依赖关系生成了DAG，再通过分析各个RDD
 
 DAGScheduler 把一个Spark作业转换成Stage的DAG（Directed Acyclic Graph有向无环图），根据RDD和Stage之间的关系找出开销最小的调度方法，然后把Stage以TaskSet的形式提交给 TaskScheduler，下图展示了DAGScheduler的作用：
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rdd_running_flow4.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rdd_running_flow4.png)
 
 *TaskScheduler*
 
 DAGScheduler 决定了运行Task的理想位置，并把这些信息传递给下层的TaskScheduler。此外，DAGScheduler还处理由于Shuffle数据丢失 导致的失败，这有可能需要重新提交运行之前的Stage（非Shuffle数据丢失导致的Task失败由TaskScheduler处理）。 
 TaskScheduler维护所有TaskSet，当Executor向Driver发送心跳时，TaskScheduler会根据其资源剩余情况分配 相应的Task。另外TaskScheduler还维护着所有Task的运行状态，重试失败的Task。下图展示了TaskScheduler的作用：
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rdd_running_flow5.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rdd_running_flow5.png)
 
 在不同运行模式中任务调度器具体为：
 Spark on Standalone模式为TaskScheduler；
@@ -107,7 +107,7 @@ Standalone 模式是Spark实现的资源调度框架，其主要的节点有Clie
 5.StandaloneExecutorBackend会建立Executor线程池，开始执行Task，并向SparkContext报告，直至Task完成。 
 6.所有Task完成后，SparkContext向Master注销，释放资源。
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rdd_running_flow7.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rdd_running_flow7.png)
 
 
 ### Spark on YARN运行过程
@@ -120,7 +120,7 @@ Spark on YARN模式根据Driver在集群中的位置分为两种模式：一种�
 Yarn框架的基本运行流程图为：
 
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rdd_running_flow8.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rdd_running_flow8.png)
 
 其中，ResourceManager负责将集群的资源分配给各个应用使用，而资源分配和调度的基本单位是 Container，其中封装了机器资源，如内存、CPU、磁盘和网络等，每个任务会被分配一个Container，该任务只能在该Container中 执行，并使用该Container封装的资源。NodeManager是一个个的计算节点，主要负责启动Application所需的 Container，监控资源（内存、CPU、磁盘和网络等）的使用情况并将之汇报给ResourceManager。ResourceManager与 NodeManagers共同组成整个数据计算框架，ApplicationMaster与具体的Application相关，主要负责同 ResourceManager协商以获取合适的Container，并跟踪这些Container的状态和监控其进度。
 
@@ -132,7 +132,7 @@ Yarn-Client模式中，Driver在客户端本地运行，这种模式可以使得
 YARN-client的工作流程分为以下几个步骤：
 
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rdd_running_flow9.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rdd_running_flow9.png)
 
 1.Spark Yarn Client向YARN的ResourceManager申请启动Application Master。同时在SparkContent初始化中将创建DAGScheduler和TASKScheduler等，由于我们选择的是Yarn- Client模式，程序会选择YarnClientClusterScheduler和YarnClientSchedulerBackend； 
 2.ResourceManager收到请求后，在集群中选择一个NodeManager，为该应用程序分配第一个Container，要求它在这个 Container中启动应用程序的ApplicationMaster，与YARN-Cluster区别的是在该ApplicationMaster不 运行SparkContext，只与SparkContext进行联系进行资源的分派； 
@@ -148,7 +148,7 @@ YARN-client的工作流程分为以下几个步骤：
 YARN-cluster的工作流程分为以下几个步骤：
 
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rdd_running_flow10.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rdd_running_flow10.png)
 
 
 1.Spark Yarn Client向YARN中提交应用程序，包括ApplicationMaster程序、启动ApplicationMaster的命令、需要在Executor中运行的程序等； 
@@ -165,8 +165,8 @@ YARN-cluster的工作流程分为以下几个步骤：
 
 *.YARN- Cluster模式下，Driver运行在AM(Application Master)中，它负责向YARN申请资源，并监督作业的运行状况。当用户提交了作业之后，就可以关掉Client，作业会继续在YARN上运行，因而 YARN-Cluster模式不适合运行交互类型的作业；
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rdd_running_flow11.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rdd_running_flow11.png)
 
 *.YARN-Client模式下，Application Master仅仅向YARN请求Executor，Client会和请求的Container通信来调度他们工作，也就是说Client不能离开。
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rdd_running_flow12.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rdd_running_flow12.png)

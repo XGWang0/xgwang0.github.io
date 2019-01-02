@@ -69,7 +69,7 @@ NameNode管理着文件系统命名空间，它维护这文件系统树及树中
   DataNode是hdfs中的worker节点，它负责存储数据块，也负责为系统客户端提供数据块的读写服务，同时还会根据NameNode的指示来进行创建、删除、和复制等操作。此外，它还会通过心跳定期向NameNode发送所存储文件块列表信息。当对hdfs文件系统进行读写时，NameNode告知客户端每个数据驻留在哪个DataNode，客户端直接与DataNode进行通信，DataNode还会与其它DataNode通信，复制这些块以实现冗余。
 
 **NameNode和DataNode架构图**
-![](https://github.com/XGWang0/wiki/raw/master/_images/structure_chart_for_namenode_and_datanode.jpg)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/structure_chart_for_namenode_and_datanode.jpg)
 
 **SecondaryNameNode**
   需要注意，SecondaryNameNode并不是NameNode的备份。我们从前面的介绍已经知道，所有HDFS文件的元信息都保存在NameNode的内存中。在NameNode启动时，_ 它首先会加载fsimage到内存中，在系统运行期间，所有对NameNode的操作也都保存在了内存中，同时为了防止数据丢失，这些操作又会不断被持久化到本地edits文件中。_
@@ -126,7 +126,7 @@ _ Edits文件存在的目的是为了提高系统的操作效率，NameNode在�
 3. 客户端直接和DataNode交互读取数据
 4. 读取完成关闭连接
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/hdfs_read_flow.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/hdfs_read_flow.png)
 
   当FSDataInputStream与DataNode通信时遇到错误，它会选取另一个较近的DataNode，并为出故障的DataNode做标记以免重复向其读取数据。FSDataInputStream还会对读取的数据块进行校验和确认，发现块损坏时也会重新读取并通知NameNode。
 
@@ -163,7 +163,7 @@ _ Edits文件存在的目的是为了提高系统的操作效率，NameNode在�
 4. 客户端通过上一步得到的信息把创建临时文件块flush到列表中的第一个DataNode
 5. 当文件关闭，NameNode会提交这次文件创建，此时，文件在文件系统中可见
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/hdfs_write_flow.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/hdfs_write_flow.png)
 
 * 上面第四步描述的flush过程实际处理过程比较负杂，现在单独描述一下：*
 

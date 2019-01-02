@@ -19,7 +19,7 @@ author: Root Wang
 
 ## HDFS HA
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/hdfs_HA.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/hdfs_HA.png)
 
 
 ```sh
@@ -85,7 +85,7 @@ server.1=0.0.0.0:2878:3878
 server.2=hadoop-slave1:2878:3878
 server.3=hadoop-slave2:2878:3878
 ```
-> [Get zoo.cfg](https://github.com/XGWang0/wiki/raw/master/_files/zookeeper/zoo.cfg)
+> [Get zoo.cfg](https://github.com/XGWang0/xgwang0.github.io/raw/master/_files/zookeeper/zoo.cfg)
 > New file myid in folder dataDir and type number of server into myid file, different server need to add different server id init it. take server.1 as example, need add 1 to myid file on server.1
 
 ### core-site.xml
@@ -125,7 +125,7 @@ server.3=hadoop-slave2:2878:3878
 </configuration>
 ```
 
-> [Get core-site.xml](https://github.com/XGWang0/wiki/raw/master/_files/hdfs/HA/core-site.xml)
+> [Get core-site.xml](https://github.com/XGWang0/xgwang0.github.io/raw/master/_files/hdfs/HA/core-site.xml)
 
 
 ### hdfs-site.xml
@@ -250,7 +250,7 @@ server.3=hadoop-slave2:2878:3878
 
 ```
 
-> [Get hdfs-site.xml](https://github.com/XGWang0/wiki/raw/master/_files/hdfs/HA/hdfs-site.xml)
+> [Get hdfs-site.xml](https://github.com/XGWang0/xgwang0.github.io/raw/master/_files/hdfs/HA/hdfs-site.xml)
 
 
 ### Sync files
@@ -336,7 +336,7 @@ hadoop-daemon.sh start journalnode
 
 ## ResourceManager HA
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/rm-ha-overview.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/rm-ha-overview.png)
 
 
 ### yarn-site.xml
@@ -487,7 +487,7 @@ hadoop-daemon.sh start journalnode
 
 ```
 
-> [Get yarn-site.xml](https://github.com/XGWang0/wiki/raw/master/_files/yarn/HA/yarn-site.xml)
+> [Get yarn-site.xml](https://github.com/XGWang0/xgwang0.github.io/raw/master/_files/yarn/HA/yarn-site.xml)
 
 ### Sync changed file to all nodes **
 Need to copy changed files to all servers

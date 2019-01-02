@@ -39,7 +39,7 @@ test 0 9 9 0 consumer-1-4a2a4aa8-32f4-4904-9c16-1c0bdf7128a2 /127.0.0.1 consumer
 消费者consumer-1-fd7b120f-fd21-4e07-8c23-87b71c1ee8a5无对应的partition。
 图示:
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_partition_VS_customergroup_1.jpg)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_partition_VS_customergroup_1.jpg)
 
 如上图，向test发送消息：1，2， 3，4，5，6，7，8，9
 只有C1能接收到消息，C2则不能接收到消息，*即同一个partition内的消息只能被同一个组中的一个consumer消费。当消费者数量多于partition的数量时，多余的消费者空闲。
@@ -72,7 +72,7 @@ test2 2 8 8 0 consumer-1-f362847d-1094-4895-ad8b-1e1f1c88936c /127.0.0.1 consume
 其中，consumer-1-8b872ef7-a2f0-4bd3-b2a8-7b26e4d8ab2c对应了2个partition
 图示为：
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_partition_VS_customergroup_2.jpg)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_partition_VS_customergroup_2.jpg)
 
 消费者数量2小于partition的数量3，此时，向test2发送消息1，2，3，4，5，6，7，8，9
 C1接收到1，3，4，6，7，9
@@ -121,7 +121,7 @@ test2 1 35 35 0 consumer-1-befc9234-260d-4ad3-b283-b67a2bf446ca /127.0.0.1 consu
 test2 2 36 36 0 consumer-1-befc9234-260d-4ad3-b283-b67a2bf446ca /127.0.0.1 consumer-1
 ```
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_partition_VS_customergroup_3.jpg)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_partition_VS_customergroup_3.jpg)
 
 如上图，向test2发送消息1，2，3，4，5，6，7，8，9
 那么g3组各个消费者及g4组的消费者接收到的消息是怎样地呢？欢迎思考！！

@@ -146,7 +146,7 @@ In Hive, we have to enable buckets by using the set.hive.enforce.bucketing=true;
 
 1.Creating Bucket as shown below.
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/hive_bucket_1.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/hive_bucket_1.png)
 
 From the above screen shot
 
@@ -162,11 +162,11 @@ Before we start moving employees data into buckets, make sure that it consist of
 
 Here we are loading data into sample bucket from employees table.
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/hive_bucket_2.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/hive_bucket_2.png)
 
 3.Displaying 4 buckets that created in Step 1
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/hive_bucket_3.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/hive_bucket_3.png)
 
 From the above screenshot, we can see that the data from the employees table is transferred into 4 buckets created in step 1.
 

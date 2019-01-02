@@ -19,7 +19,7 @@ author: Root Wang
 ## JobTracker
   JobTracker进程的作用是运行和监控MapReduce的Job，当一个客户端向JobTracker提交任务时，过程如下图：
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/mapreduce_strucutre_chat.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/mapreduce_strucutre_chat.png)
 
 1. JobTracker接收Job请求
 2. JobTracker根据Job的输入参数向NameNode请求包含这些文件数据块的DataNode节点列表
@@ -69,11 +69,11 @@ author: Root Wang
 
 下面就是一个典型的Hadoop拓扑图，主动结构，`NameNode和JobTracker位于主端`，`DataNode和TaskTracker位于从端`。
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/jobtracker_tasktracker_chart.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/jobtracker_tasktracker_chart.png)
 
 客户端向JobTracker发送Job任务，JobTracker会把Job切分，并分配不同的Map和Reduce任务到每一台机器。
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/hadoop_components_chart.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/hadoop_components_chart.png)
 
 引自：https://blog.csdn.net/suifeng3051/article/details/37932593
 

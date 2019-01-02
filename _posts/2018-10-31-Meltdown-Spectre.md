@@ -65,7 +65,7 @@ sid-channel attacks :
 侧信道的攻击面:
 enclave 和non-enclave共享大量的系统资源，这就给侧信道攻击留下了非常大的攻击面。经过对现有资料的总结和系统结构的分析，我们把SGX的攻击总结在图2里面。
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/meltdown-spectre_1.jpg)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/meltdown-spectre_1.jpg)
 
 如图2所示，enclave 的运行过程中会用到
 
@@ -118,7 +118,7 @@ enclave 和non-enclave共享大量的系统资源，这就给侧信道攻击留�
 
 在讲解基于DRAM 的侧信道之前，我们首先了解一些DRAM 的基本知识。DRAM 一般由channel，DIMM, rank, bank 等部分构成，如图7所示。每个bank 又有columns 和rows 组成。每个bank里面还有一个row buffer 用来缓存最近访问过的一个row。在访问DRAM 的时候，如果访问地址已经被缓存在row buffer 当中（情况A），就直接从buffer 里面读取，否则需要把访问地址对应的整个row 都加载到row buffer 当中（情况B）。当然，如果row buffer 之前缓存了其他row 的内容，还需要先换出row buffer 的内容再加载新的row（情况C）。A、B、C 对应的三种情况，访问速度依次递减（情况A 最快，情况C 最慢）。这样，通过时间上的差异，攻击者就可以了解当前访问的内存地址是否在row buffer 里面，以及是否有被换出。文章[25] 在侧信道攻击过程中用到了基于DRAM 的侧信道信息。另外文章[23] 介绍了更多基于DRAM 的攻击细节，不过该文章不是在SGX 环境下的攻击。
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/meltdown-spectre_2.jpg)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/meltdown-spectre_2.jpg)
 
 基于DRAM 的侧信道攻击有一些不足[28]。第一，enclave 使用的内存通常都在缓存里面，只有少部分需要从DRAM 里面去取。第二，DRAM的精度不够。例如，一个页面（4KB) 通常分布在4 个DRAM row 上面。这样，基于DRAM 的侧信道攻击的精度就是1KB。仅仅比基于页表的侧信道攻击好一些，远远不及基于cache 的侧信道攻击的精度。第三，DRAM里面存在很难避免的噪音干扰，因为一个DRAM row 被很多页面使用，同时同一个bank 不同row的数据读取也会对时间测量造成干扰，使得误报时常发生。
 

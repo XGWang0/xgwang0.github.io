@@ -28,7 +28,7 @@ Kafka集群存储同一类别的消息流称为主题
 
 Kafka中的Message是以topic为基本单位组织的，不同的topic之间是相互独立的。每个topic又可以分成几个不同的partition(每个topic有几个partition是在创建topic时指定的)，每个partition存储一部分Message。借用官方的一张图，可以直观地看到topic和partition的关系
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_log_anatomy.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_log_anatomy.png)
 
 partition是以文件的形式存储在文件系统中，比如，创建了一个名为page_visits的topic，其有5个partition，那么在Kafka的数据目录中(由配置文件中的log.dirs指定的)中就有这样5个目录: page_visits-0， page_visits-1，page_visits-2，page_visits-3，page_visits-4，其命名规则为<topic_name>-<partition_id>，里面存储的分别就是这5个partition的数据。
 
@@ -40,7 +40,7 @@ Kafka集群会将发布的消息保存一段时间，不管是否被消费。例
 
 
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_log_consumer.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_log_consumer.png)
 
 
 ### Partition
@@ -76,7 +76,7 @@ Log的分区被分布到集群中的多个服务器上。每个服务器处理�
 *消费者*
 Kafka有一个消费者组的概念，生产者把消息发到的是消费者组，在消费者组里面可以有很多个消费者实例，如下图所示：
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_consumer-groups.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_consumer-groups.png)
 
 
 Kafka集群有两台服务器，四个分区，此外有两个消费者组A和B，消费者组A具有2个消费者实例C1-2，消费者B具有4个消费者实例C3-6

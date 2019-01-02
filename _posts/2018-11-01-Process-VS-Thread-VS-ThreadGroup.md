@@ -23,7 +23,7 @@ author: Root Wang
 4.void *(*start_routine) (void *), void *arg);
 ```
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/process_thread_threadgroup_1.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/process_thread_threadgroup_1.png)
 
 线程栈如上图所示，共享进程（或者称之为线程组）的虚拟地址空间。既然多个线程聚集在一起，我怎么知道我要操作的那个线程栈的地址呢。要解决这个问题，必须要领会线程和进程以及线程组的概念。我不想写一堆片汤话，下面我运行我的测试程序，然后结合现象分析原因：
 
@@ -134,11 +134,11 @@ int main(void)
 
 这是一个比较综合的程序，因为我下面要多次从不同的侧面分析。对于现在，我们要展示的是进程 线程 线程组的关系。在一个终端运行编译出来的test2程序，显示的信息如下：
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/process_thread_threadgroup_2.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/process_thread_threadgroup_2.png)
 
 另一个终端看ps信息，ps显示的信息如下：
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/process_thread_threadgroup_3.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/process_thread_threadgroup_3.png)
 
   直接ps，是看不到我们创建的线程的。只有3658一个进程。当我们采用ps -eLf的时候，我们看到了三个线程3658/3659/3660，或者称之为轻量级进程（LWP）。Linux到底是怎么看待这三者的关系的呢：
     Linux下多线程程序，一般都是有一个主进程通过调用pthread_create创建了一个或者多个子线程，如同我们的程序，主进程在main中创建了两个子进程。那么Linux到底是怎么看待这些事情的呢？
@@ -206,9 +206,9 @@ probe scheduler.cpu_off
 
 我们的二进制可执行程序叫做 test2, 一个终端叫起systemtap，另一个终端叫起test2,查看下输出：
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/process_thread_threadgroup_4.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/process_thread_threadgroup_4.png)
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/process_thread_threadgroup_5.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/process_thread_threadgroup_5.png)
 
 上面三个LWP都是CPU友好型的，如果同属一个线程组的多个线程（或者称之为LWP）都是CPU消耗型，你可以看到激烈的争夺CPU资源。
 

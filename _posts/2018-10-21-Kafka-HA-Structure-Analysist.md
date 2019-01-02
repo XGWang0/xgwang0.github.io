@@ -12,7 +12,7 @@ author: Root Wang
 ## 下面是kafka与其他消息系统之间的区别
 
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_ha_strucutre_1.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_ha_strucutre_1.png)
 
 可以看出，kafka支持持久化消息，消息回追等功能，在HA方面kafka使用的是replication策略
 
@@ -20,7 +20,7 @@ author: Root Wang
 
 ### kafka的系统架构的文件存储机制
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_ha_strucutre_2.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_ha_strucutre_2.png)
 
 如图，kafka中的消息是以topic进行分类的，生产者通过topic向kafka broker发送消息，消费者通过topic读取消息。然而topic在物理层面上又能够以partition进行分组，在上一篇已经提到，一个topic可以分为多个partition，那么topic以及partition是怎么存储的呢?partition还可以细分为segment，一个物理上有多个segment组成，那么这些segment又是什么呢?
 
@@ -32,17 +32,17 @@ author: Root Wang
 ```
 那么我们此时可以在/tmp/kafka-logs(log.dirs option on server.properity)目录中可以看到生成了4个目录:
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_ha_strucutre_3.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_ha_strucutre_3.png)
 
 在Kafka文件存储中，同一个topic下有多个不同的partition，每个partiton为一个目录，partition的名称规则为:topic名称+有序序号，第一 个序号从0开始计，最大的序号为partition数量减1，partition是实际物理上的概念，而topic是逻辑上的概念。
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_ha_strucutre_4.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_ha_strucutre_4.png)
 
 “.index”索引文件存储大量的元数据，“.log”数据文件存储大量的消息，索引文件中的元数据指向对应数据文件中message的物理偏移地址。其中以“.index”索引文件中的元数据[3, 348]为例，在“.log”数据文件表示第3个消息，即在全局partition中表示170410+3=170413个消息，该消息的物理偏移地址为348。
 
 如 00000000000000000170410.index 和 log 文件的对应如下:
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_ha_strucutre_5.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_ha_strucutre_5.png)
 
 那么如何从partition中通过offset查找message呢?
 
@@ -93,7 +93,7 @@ kafka在处理传播消息的时候，
 
 kafka replication propagate消息的过程:
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_ha_strucutre_6.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_ha_strucutre_6.png)
 
 如图示: Kafka集群中有4个broker, 某topic有3个partition,且复制因子即副本(replica)个数也为3，Kafka提供了数据复制算法保证，如果leader发生故障或挂掉，一个新leader被选举并被接受客户端的消息成功写入。Kafka确保从同步副本列表中选举一个副本为leader，或者说follower追赶leader数据。leader负责维护和跟踪ISR(In-Sync Replicas的缩写，表示副本同步队列)中所有follower滞后的状态。当producer发送一条消息到broker后，leader写入消息并通知ISR中的所有follower去拉取消息，follower拉取到消息之后返回ack，leader收到所有的follower的确认消息之后，这个消息就会认为提交了。
 
@@ -163,7 +163,7 @@ HW:HW俗称高水位，HighWatermark的缩写，取一个partition对应的ISR�
 
 producer生产消息至broker后，ISR以及HW和LEO的流转过程图如下:
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/kafka_ha_strucutre_7.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/kafka_ha_strucutre_7.png)
 
 Kafka的这种使用ISR的方式则很好的均衡了确保数据不丢失以及吞吐率,就像上面说的既不是同步也不是异步。
 

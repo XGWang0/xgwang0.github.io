@@ -22,7 +22,7 @@ author: Root Wang
 需要注意的是，在Yarn中我们把job的概念换成了application，因为在新的Hadoop2.x中，运行的应用不只是MapReduce了，还有可能是其它应用如一个DAG（有向无环图Directed Acyclic Graph，例如storm应用）。Yarn的另一个目标就是拓展Hadoop，使得它不仅仅可以支持MapReduce计算，还能很方便的管理诸如Hive、Hbase、Pig、Spark/Shark等应用。这种新的架构设计能够使得各种类型的应用运行在Hadoop上面，并通过Yarn从系统层面进行统一的管理，也就是说，有了Yarn，各种应用就可以互不干扰的运行在同一个Hadoop系统中，共享整个集群资源，如下图所示： 
 
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/yarn_strucutre-chart1.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/yarn_strucutre-chart1.png)
 
 ## Yarn的组件及架构
 Yarn主要由以下几个组件组成：
@@ -39,7 +39,7 @@ ResourceManager和NodeManager两个进程主要负责系统管理方面的任务
 
 下面我们看一下整个Yarn的架构图： 
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/yarn_strucutre-chart2.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/yarn_strucutre-chart2.png)
 
 
 ## Yarn的组件详解
@@ -100,7 +100,7 @@ Yarn 框架相对于老的 MapReduce 框架什么优势呢？
 3. ApplicationMaster实例管理应用程序的执行
 下面这幅图展示了应用程序的整个执行过程：
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/yarn_strucutre-chart3.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/yarn_strucutre-chart3.png)
 
 1. 客户端程序向ResourceManager提交应用并请求一个ApplicationMaster实例
 
@@ -176,7 +176,7 @@ ApplicationMaster在得到这些Containers后，还需要与分配Container所�
 3. ApplicationMaster与ResourceManager通信，为内部要执行的任务申请资源，一旦得到资源后，将于NodeManager通信，以启动对应的任务。
 4. 所有任务运行完成后，ApplicationMaster向ResourceManager注销，整个应用程序运行结束。
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/yarn_instance_struct.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/yarn_instance_struct.png)
 
 **Container**
 1. Container是YARN中资源的抽象，它封装了某个节点上一定量的资源（CPU和内存两类资源）。它跟Linux Container没有任何关系，仅仅是YARN提出的一个概念（从实现上看，可看做一个可序列化/反序列化的Java类）。 
@@ -194,7 +194,7 @@ Container是YARN中最重要的概念之一，懂得该概念对于理解YARN的
 
 
 ## 概念理解
-![](https://github.com/XGWang0/wiki/raw/master/_images/yarn_parm_understanding.jpeg)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/yarn_parm_understanding.jpeg)
 
 如上图所示，先看最下面褐色部分， 
 AM参数mapreduce.map.memory.mb=1536MB，表示AM要为map Container申请1536MB资源，但RM实际分配的内存却是2048MB，因为yarn.scheduler.mininum-allocation-mb=1024MB，这定义了RM最小要分配1024MB，1536MB超过了这个值，所以实际分配给AM的值为2048MB(这涉及到了规整化因子，关于规整化因子，在本文最后有介绍)。 

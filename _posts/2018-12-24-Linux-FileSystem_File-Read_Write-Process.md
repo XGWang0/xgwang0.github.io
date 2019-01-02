@@ -12,7 +12,7 @@ author: Root Wang
 ### 用户读写文件的流程
 ***file->dentry->inode->iops->address_space->disk 的流程：***
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/file_sys_structure.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/file_sys_structure.png)
 
 #### 通过struct找到磁盘inode节点对象： 
 一个进程打开的文件用struct file结构表示，这是VFS可访问的（file中的file_operations）。在file结构中可找到这个文件对应的`dentry`对象，如果两个进程打开同一个文件，那它们的file就指向同一个`dentry`。通过`dentry`就可以找到这个文件对应的`inode`对象，到了`inode`就与特定文件系统（如ext3/ext4）相关了，这个`inode`有读写文件的`file_operations`。那么，如果一个dentry是另一个`dentry`的硬链接，那这两个`dentry`就指向同一个`inode`对象。

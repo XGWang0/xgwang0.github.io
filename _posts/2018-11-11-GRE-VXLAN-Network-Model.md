@@ -14,7 +14,7 @@ author: Root Wang
 *. 两台虚拟机的ip为192.168.159.130和192.168.159.132
 原理图如下：
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/vxlan_gre_network.jpg)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/vxlan_gre_network.jpg)
 
 这里的VTEP就是隧道endpoint，可以是GRE也可以是VXLAN的。
 为什么要加namespace，是模拟物理中的虚拟机报文走向，guest的网络和host的网络本身就是两个不同的网络，os都不同.

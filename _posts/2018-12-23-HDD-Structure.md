@@ -19,7 +19,7 @@ author: Root Wang
 * 柱面(Cylinders)：所有盘片上的同一位置的磁道组成的立体叫做一个柱面。
 * 扇区(Sector)：以磁道为单位管理磁盘仍然太大，所以计算机前辈们又把每个磁道划分出了多个扇区，见下图
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/hdd_structure.jpg)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/hdd_structure.jpg)
 
 Linux上可以通过fdisk命令，来查看当前系统使用的磁盘的这些物理息。
 ```sh
@@ -57,7 +57,7 @@ MBR位于整个磁盘的的第一个扇区，总体分为三部分：
 #### GPT:
 GPT的全称是Globally Unique Identifier Partition Table，意即GUID分区表，它的推出是和UEFI BIOS相辅相成的，鉴于MBR的磁盘容量和分区数量已经不能满足硬件发展的需求，GPT首要的任务就是突破了2.2T分区的限制，最大支持18EB的分区。
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/GPT_structure.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/GPT_structure.png)
 
 而在分区数量上，GPT会为每一个分区分配一个全局唯一的标识符，理论上GPT支持无限个磁盘分区。在每一个分区上，这个标识符是一个随机生成的字符串，可以保证为地球上的每一个GPT分区都分配完全唯一的标识符。
 

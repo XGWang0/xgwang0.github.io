@@ -91,9 +91,9 @@ Key Design Type
 <<date>-<userId> -> <userId>-<date>
 而`Promotion`意指將某個`cf:qualifier`的值（列的值）提升至`RowKey`的位置，與原來的`RowKey`形成一個新的複合`RowKey`：
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/hbase_rowkey_image1.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/hbase_rowkey_image1.png)
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/hbase_rowkey_image2.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/hbase_rowkey_image2.png)
 
 ### Random key
 `Random Key`，顧名思義就是隨機分布的`RowKey`，這種設計可以降低在寫入的情境發生`hotspot`的狀況。
@@ -105,7 +105,7 @@ Key Design Type
 效能
 由下面的圖可以了解這幾種RowKey適用的情境與效能：
 
-![](https://github.com/XGWang0/wiki/raw/master/_images/hbase_rowkey_image3.png)
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/hbase_rowkey_image3.png)
 
 
 ## HBase 查询方式
