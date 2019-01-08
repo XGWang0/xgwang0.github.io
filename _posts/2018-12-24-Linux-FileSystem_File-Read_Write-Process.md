@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Linux 文件读写流扯" 
+title:  "Linux 文件读/写流程" 
 categories: IO
 tags:  FileIO
 author: Root Wang
@@ -87,7 +87,7 @@ long nr_blockdev_pages(void)
 
 sector（扇区）是硬件读写的最小操作单元，例如如果一个sector是512字节，而格式化文件系统时指定一个block是1K，那文件系统层面只能每次两个sector一起操作。block是文件系统格式化时确定的，sector是由你的硬盘决定的。但是如果你的block越大，那么你的空间浪费可能就会越大（内部碎片，一个文件的末尾占的block的空闲部分）。
 
-BIO：即Block IO。就是管硬盘的哪些blocks要读到内存的哪些pages。把inode读到内存时，磁盘里这个inode表里记录了这个inode的数据位于磁盘的哪些blocks，当然这些block在硬盘中可能不连续存放，例如要读出一个inode的32KB的内容，但这些block的分布在4个不连续的位置（b1…b2…b3b4b5b6…b7b8），那readpages会将每一段连续的blocks转化成一个bio结构，每个bio结构都记录它里面的blocks在磁盘里的位置以及这些blocks要填到page cache的哪些位置。例如这里就是要生成4个bio对象。那么在一次读过程中，即使一个block大小是1KB，但由于它和其他blocks不连续，那也要单独生成一个bio。
+BIO：即Block IO。就是把硬盘的哪些blocks要读到内存的哪些pages。把inode读到内存时，磁盘里这个inode表里记录了这个inode的数据位于磁盘的哪些blocks，当然这些block在硬盘中可能不连续存放，例如要读出一个inode的32KB的内容，但这些block的分布在4个不连续的位置（b1…b2…b3b4b5b6…b7b8），那readpages会将每一段连续的blocks转化成一个bio结构，每个bio结构都记录它里面的blocks在磁盘里的位置以及这些blocks要填到page cache的哪些位置。例如这里就是要生成4个bio对象。那么在一次读过程中，即使一个block大小是1KB，但由于它和其他blocks不连续，那也要单独生成一个bio。
 
 应用程序在读写磁盘时，是通过address_space的operations将page cache中的buffer转换成bio对象再读写磁盘的，但写磁盘的时候并不是以bio为单位的，我们知道一个bio对应一块连续的blocks，可能两个进程都在写这个磁盘或者一个进程两次写请求，提交的bio恰好能拼接成一段更大的连续blocks。注意这时组装bio的过程仍处在每个进程自己的环境中，那么你就会想到，系统中多个进程都读写磁盘时，肯定要在进程之下维护一个请求队列以及相应的调度算法来决定这些bio如何发给磁盘。
 
