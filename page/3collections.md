@@ -47,6 +47,7 @@ type: page
 * [python magic method EN 1](https://www.python-course.eu/python3_magic_methods.php)
 * [python magic method EN 2](https://rszalski.github.io/magicmethods/)
 * [python magic method local](https://github.com/XGWang0/wiki/raw/master/_files/magic_method_python/magicmethods.pdf)
+* [python nose structure](https://www.cnblogs.com/landhu/tag/nose/)
 
 
 ## 工具
