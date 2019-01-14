@@ -233,4 +233,28 @@ $ echo ${test%%/*} 
 
 #${变量名#substring正则表达式}从字符串开头开始配备substring,删除匹配上的表达式。 
 #${变量名%substring正则表达式}从字符串结尾开始配备substring,删除匹配上的表达式。 
+
 #注意：${test##*/},${test%/*} 分别是得到文件名，或者目录地址最简单方法。   
+
+
+### 性能比较
+
+```sh
+在shell中，通过awk,sed,expr 等都可以实现，字符串上述操作。下面我们进行性能比较。
+
+[chengmo@localhost ~]$ test='c:/windows/boot.ini'                       
+[chengmo@localhost ~]$ time for i in $(seq 10000);do a=${#test};done;           
+
+real    0m0.173s
+user    0m0.139s
+sys     0m0.004s
+
+[chengmo@localhost ~]$ time for i in $(seq 10000);do a=$(expr length $test);done;      
+
+real    0m9.734s
+user    0m1.628s
+
+ 
+
+速度相差上百倍，调用外部命令处理，与内置操作符性能相差非常大。在shell编程中，尽量用内置操作符或者函数完成。使用awk,sed类似会出现这样结果。
+```
