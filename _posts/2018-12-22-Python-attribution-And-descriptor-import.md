@@ -44,24 +44,24 @@ class Movie(object):
 ```python
 class Movie(object):
  def __init__(self, title, description, score):
- self.title = title
- self.description = description
- self.score = score
-　　　　 self.ticket = ticket
+ 	self.title = title
+ 	self.description = description
+ 	self.score = score
+　　　  self.ticket = ticket
   
  @property
  def score(self):
- return self.__score
+ 	return self.__score
   
  @score.setter
  def score(self, score):
- if score < 0:
-  raise ValueError("Negative value not allowed:{}".format(score))
- self.__score = score
+ 	if score < 0:
+  		raise ValueError("Negative value not allowed:{}".format(score))
+ 	self.__score = score
   
  @score.deleter
  def score(self):
- raise AttributeError("Can not delete score")
+ 	raise AttributeError("Can not delete score")
 ```
 这样在任何地方修改score都会检测它是否小于0。
 
@@ -149,8 +149,8 @@ class Movie(object):
 a = Movie()
 a.score = 1
 a.ticket = 2
-a.title = ‘test'
-a.descript = ‘…'
+a.title = 'test'
+a.descript = '…'
 ```
 这样太生硬了，所以我们还缺一个构造函数。
 ```python
@@ -186,7 +186,7 @@ class Movie(object):
 
 ==================================
 
-#### 数据描述服 非数据描述服
+#### 数据描述符 VS 非数据描述符
 * 数据描述符：至少实现了 __get__()和__set__()
 * 非数据描述符:没有实现 __set__()
 
@@ -276,17 +276,16 @@ class People:
         self.name=name
         self.age=age
 ```
-#基于上面的演示,我们已经知道,在一个类中定义描述符它就是一个类属性,存在于类的属性字典中,而不是实例的属性字典
-#那既然描述符被定义成了一个类属性,直接通过类名也一定可以调用吧,没错
+> 基于上面的演示,我们已经知道,在一个类中定义描述符它就是一个类属性,存在于类的属性字典中,而不是实例的属性字典
+> 那既然描述符被定义成了一个类属性,直接通过类名也一定可以调用吧,没错People.name 
+> 恩,调用类属性name,本质就是在调用描述符Str,触发了__get__()，类去操作属性时,会把None传给instance
 
-People.name 
-#恩,调用类属性name,本质就是在调用描述符Str,触发了__get__()，类去操作属性时,会把None传给instance
 ```python
 People.name='egon'  #那赋值呢,我去,并没有触发__set__()
 del People.name     #赶紧试试del,我去,也没有触发__delete__()
 
 原因:描述符在使用时被定义成另外一个类的类属性,因而类属性比二次加工的描述符伪装而来的类属性有更高的优先级
-People.name #恩,调用类属性name,找不到就去找描述符伪装的类属性name,触发了__get__()
+People.name 调用类属性name,找不到就去找描述符伪装的类属性name,触发了__get__()
 People.name='egon'
 #那赋值呢,直接赋值了一个类属性,它拥有更高的优先级,相当于覆盖了描述符,肯定不会触发描述符的__set__()
 del People.name #同上
@@ -311,13 +310,13 @@ class People:
 
 p1=People('egon',18)
 
-#如果描述符是一个数据描述符(即有__get__又有__set__),那么p1.name的调用与赋值都是触发描述符的操作,
-#与p1本身无关了,相当于覆盖了实例的属性
+> 如果描述符是一个数据描述符(即有__get__又有__set__),那么p1.name的调用与赋值都是触发描述符的操作,
+> 与p1本身无关了,相当于覆盖了实例的属性
 p1.name='egonnnnnn'
 p1.name
 print(p1.__dict__)
 
-#实例属性字典中没有name,因为name是数据描述符,优先级高于实例属性,查看/赋值/删除都是跟描述符有关,与实例无关
+> 实例属性字典中没有name,因为name是数据描述符,优先级高于实例属性,查看/赋值/删除都是跟描述符有关,与实例无关
 del p1.name
 ```
 
@@ -494,57 +493,7 @@ foo = Foo()
 
 上面这个例子中， attr 是类 Foo 的一个成员函数，可通过语句 foo.attr() 被调用。 但当它被 @property 修饰后，这个成员函数将不再是一个函数，而变为一个描述符。 bar 是一个未被修饰的成员函数。 type(Foo.attr) 与 type(Foo.bar) 的结果分别为： 
 
-```python
-class Foo:
-    @property
-    def AAA(self):
-        print('get的时候运行我啊')
-
-    @AAA.setter
-    def AAA(self,value):
-        print('set的时候运行我啊')
-
-    @AAA.deleter
-    def AAA(self):
-        print('delete的时候运行我啊')
-
-#只有在属性AAA定义property后才能定义AAA.setter,AAA.deleter
-f1=Foo()
-f1.AAA
-f1.AAA='aaa'
-del f1.AAA
-
-#方式2
-class Foo:
-    def get_AAA(self):
-        print('get的时候运行我啊')
-
-    def set_AAA(self,value):
-        print('set的时候运行我啊')
-
-    def delete_AAA(self):
-        print('delete的时候运行我啊')
-    AAA=property(get_AAA,set_AAA,delete_AAA) #内置property三个参数与get,set,delete一一对应
-
-f1=Foo()
-f1.AAA
-f1.AAA='aaa'
-del f1.AAA
-```
-
-property将一个函数变成了类似于属性的使用，无非只是省略了一个括号而已，可是这有什么意义？以属性的方式来调用函数，换句话说，我以为我调用的是属性，但是其实是函数，这样就完成了一个封装，不需要setter和getter，而直接将setter和getter内嵌进去，大大减少了代码量，使代码简洁美观 
-案例一：
-
-```python
-class Goods:
-
-    def __init__(self):
-        # 原价
-        self.original_price = 100
-        # 折扣
-        self.discount = 0.8
-
-    @property
+```python class Foo: @property def AAA(self): print('get的时候运行我啊') @AAA.setter def AAA(self,value): print('set的时候运行我啊') @AAA.deleter def AAA(self): print('delete的时候运行我啊') #只有在属性AAA定义property后才能定义AAA.setter,AAA.deleter f1=Foo() f1.AAA f1.AAA='aaa' del f1.AAA #方式2 class Foo: def get_AAA(self): print('get的时候运行我啊') def set_AAA(self,value): print('set的时候运行我啊') def delete_AAA(self): print('delete的时候运行我啊') AAA=property(get_AAA,set_AAA,delete_AAA) #内置property三个参数与get,set,delete一一对应 f1=Foo() f1.AAA f1.AAA='aaa' del f1.AAA ``` property将一个函数变成了类似于属性的使用，无非只是省略了一个括号而已，可是这有什么意义？以属性的方式来调用函数，换句话说，我以为我调用的是属性，但是其实是函数，这样就完成了一个封装，不需要setter和getter，而直接将setter和getter内嵌进去，大大减少了代码量，使代码简洁美观 案例一： ```python class Goods: def __init__(self): # 原价 self.original_price = 100 # 折扣 self.discount = 0.8 @property
     def price(self):
         # 实际价格 = 原价 * 折扣
         new_price = self.original_price * self.discount
