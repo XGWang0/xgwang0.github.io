@@ -46,7 +46,7 @@ ENV name Cloud Man
 ENTRYPOINT echo "Hello, $name" 
 ```
 
-执行 docker run <image> 将输出：
+执行 docker run \<image\> 将输出：
 ```sh
 Hello, Cloud Man
 ```
@@ -57,7 +57,7 @@ Hello, Cloud Man
 
 #### Exec 格式
 
-<instruction> ["executable", "param1", "param2", ...]
+\<instruction\> ["executable", "param1", "param2", ...]
 
  
 例如：
@@ -70,7 +70,7 @@ ENTRYPOINT ["/bin/echo", "Hello world"]
 ```
  
 
-当指令执行时，会直接调用 <command>，不会被 shell 解析。
+当指令执行时，会直接调用 \<command\>，不会被 shell 解析。
 例如下面的 Dockerfile 片段：
 ```sh
 ENV name Cloud Man  
