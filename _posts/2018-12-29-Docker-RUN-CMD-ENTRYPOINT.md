@@ -25,7 +25,7 @@ RUN、CMD 和 ENTRYPOINT 这三个 Dockerfile 指令看上去很类似，很容�
 
 #### Shell 格式
 
-<instruction> <command>
+\<instruction\> \<command\>
 
 例如：
 ```sh
@@ -36,7 +36,7 @@ CMD echo "Hello world"
 ENTRYPOINT echo "Hello world" 
 ```
 
-*当指令执行时，shell 格式底层会调用 /bin/sh -c <command> 。*
+*当指令执行时，shell 格式底层会调用 /bin/sh -c \<command\> 。*
 
 例如下面的 Dockerfile 片段：
 
