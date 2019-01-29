@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Yeild Practice In Python"
-categories: python
+categories: PYTHON
 tags:  yield interateor generator
 author: Root Wang
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "_xx __xx __xx__ usageIn Python"
-categories: python
+categories: PYTHON
 tags:  syntax
 author: Root Wang
 ---

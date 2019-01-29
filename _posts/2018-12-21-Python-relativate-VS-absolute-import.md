@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Relative VS Absolute import"
-categories: python
+categories: PYTHON
 tags:  closure decorators
 author: Root Wang
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Swarm Sample"
-categories: docker
+categories: DOCKER
 tags:  docker swarm docker-machine
 author: Root Wang
 ---

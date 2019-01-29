@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "属性与描述符"
-categories: python
+categories: PYTHON
 tags:  attribution descriptor
 author: Root Wang
 ---

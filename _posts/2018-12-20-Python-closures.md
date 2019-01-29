@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Closure Understand And Sample In Python"
-categories: python
+categories: PYTHON
 tags:  closure decorators
 author: Root Wang
 ---

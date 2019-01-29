@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "input VS raw_input in python2 and python3"
-categories: python
+categories: PYTHON
 tags:  syntax
 author: Root Wang
 ---
