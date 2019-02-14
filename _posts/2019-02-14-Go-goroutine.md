@@ -18,8 +18,11 @@ author: Root Wang
 
 一个进程在启动的时候，会创建一个主线程，这个主线程结束的时候，程序进程也就终止了，所以一个进程至少有一个线程，这也是我们在main函数里，使用goroutine的时候，要让主线程等待的原因，因为主线程结束了，程序就终止了，那么就有可能会看不到goroutine的输出。
 
+
+
 #### goroutine
-goroutine : go语言中并发指的是让某个函数独立于其他函数运行的能力，一个goroutine就是一个独立的工作单元，Go的runtime（运行时）会在逻辑处理器上调度这些goroutine来运行，一个逻辑处理器绑定一个操作系统线程，所以说goroutine不是线程，它是一个协程，也是这个原因，它是由Go语言运行时本身的算法实现的。
+
+goroutine : go语言中并发指的是让某个函数独立于其他函数运行的能力，一个goroutine就是一个独立的工作单元. 当一个 Go 程序启动时，一个执行 main function 的 goroutine 会被创建，称之为 main goroutine, Go的runtime（运行时）会在逻辑处理器上调度这些goroutine来运行，一个逻辑处理器绑定一个操作系统线程，所以说goroutine不是线程，它是一个协程，也是这个原因，它是由Go语言运行时本身的算法实现的。
 
 这里我们总结下几个概念：
 
