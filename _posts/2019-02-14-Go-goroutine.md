@@ -42,6 +42,10 @@ goroutine : go语言中并发指的是让某个函数独立于其他函数运行
 * 并行:指的是在不同的物理处理器上同时执行不同的代码片段，并行可以同时做很多事情.
 * 并发:是同时管理很多事情，因为操作系统和硬件的总资源比较少，所以并发的效果要比并行好的多，使用较少的资源做更多的事情，也是Go语言提倡的。
 
+那么问题来了, goroutine什么时候才能得到执行机会呢？
+
+答案：当正在执行的goroutine遇到系统IO（timer，channel read/write，file read/write...)的时候，go scheduler会切换出去看看是不是有别的goroutine可以执行一把，这个时候其他goroutine就有机会了。实际上，这就是golang协程的概念。同时用少数的几个线程来执行大量的goroutine协程，谁正在调用系统IO谁就歇着，让别人用CPU。
+
 #### 实例
 Go的并发原理我们刚刚讲了，那么Go的并行是怎样的呢？其实答案非常简单，多创建一个逻辑处理器就好了，这样调度器就可以同时分配全局运行队列中的goroutine到不同的逻辑处理器上并行执行。
 
@@ -94,5 +98,66 @@ func main() {
 	wg.Wait()
 }
 ```
+
+#### goroutine的嵌套
+goroutinue 协程嵌套，会产生依赖关系(父子关系)么？
+上货
+```go
+package main
+ 
+import (
+    "fmt"
+    "time"
+)
+ 
+func main() {
+    go func() {
+        fmt.Println("father alive")
+ 
+        go func() {
+            time.Sleep(time.Second * 2)
+            fmt.Println("child alive")
+        }()
+        defer fmt.Println("father dead")
+        return
+    }()
+    time.Sleep(time.Second * 3)
+    fmt.Println("main alive")
+
+}
+----------------Result--------------------
+father alive
+father dead
+child alive
+main alive
+```
+> 不同于linux里的进程依赖，golang里，协程都是互相独立的，没有依赖（父子）关系。main函数本身也运行在一个goroutine中，main是所有协程的被依赖者，这里是个特例。
+
+#### Q&A
+
+```go
+
+ch := chan int
+ch-<1
+
+----------Result----------
+fatal error: all goroutines are asleep – deadlock!
+```
+> 原因为：当channel为非缓冲类型channel时候，ch<-num和<-ch都会保持等待状态。main goroutine线中，期待从其他goroutine线读取数据，但是其他goroutine线都已经执行完了或者没有其他goroutine(all goroutines are asleep)，那么就永远不会从管道中取出数据。所以，main goroutine线在等一个永远不会被取出的数据，那整个程序就永远等下去了。
+
+
+```go
+ch := make(chan int, 10)
+ch <- 10
+ch <- 10
+for value := range ch {
+	fmt.Println("value is ", value)
+}
+----------Result----------
+fatal error: all goroutines are asleep – deadlock!
+
+```
+> 原因为：尽管使用了缓冲channel，但是range ch 将会持续的读取channel数据指导ch被关闭，当range ch读取完2个数据后，没有其他的goroutine会放入新的数据到channel，并且ch也没有被close，这将导致整个程序会永远等待下去。
+
 
 
