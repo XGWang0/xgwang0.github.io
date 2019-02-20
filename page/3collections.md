@@ -11,6 +11,9 @@ type: page
 
 ## Platform
 
+### Go
+
+* [ Go ](http://blog.51cto.com/9291927)
 
 ### K8S
 
