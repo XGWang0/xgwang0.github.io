@@ -10,7 +10,7 @@ author: Root Wang
 {:toc}
 
 ### fmt.Printf
-```go
+```c
 package main
 import "fmt"
 import "os"

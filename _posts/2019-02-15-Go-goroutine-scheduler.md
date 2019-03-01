@@ -57,7 +57,7 @@ CALL	runtime·mstart(SB)		// start goroutine created above code
 
 ### 创建goroutine(G)
 在Go程序中，时常会有类似代码：
-```go
+```c
 go do_something()
 ```
 go关键字就是用来创建一个goroutine的，后面的函数就是这个goroutine需要执行的代码逻辑。go关键字对应到调度器的接口就是`runtime·newproc`。`runtime·newproc`干的事情很简单，就负责制造一块砖(G)，然后将这块砖(G)放入当前这个地鼠(M)的小车(P)中。

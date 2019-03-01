@@ -14,7 +14,7 @@ author: Root Wang
     
 
 要这个值实现了接口的方法。
-```go
+```c
 type Reader interface { 
  Read(p []byte) (n int, err os.Error) 
 } 
@@ -33,7 +33,7 @@ r = new(bytes.Buffer)
 
 ### 接口类型内存布局
 在类型中有一个重要的类别就是接口类型，表达了固定的一个方法集合。一个接口变量可以存储任意实际值（非接口），只要这个值实现了接口的方法。interface在内存上实际由两个成员组成，如下图，tab指向虚表，data则指向实际引用的数据。虚表描绘了实际的类型信息及该接口所需要的方法集。
-```go
+```c
 type Stringer interface { 
  String() string 
 } 
@@ -65,7 +65,7 @@ func main() {
 接口类型的一个极端重要的例子是空接口：interface{} ,它表示空的方法集合，由于任何值都有零个或者多个方法，所以任何值都可以满足它。
 
 > 注意，*[]T不能直接赋值给[]interface{}*
-```go
+```c
 //t := []int{1, 2, 3, 4} wrong 
 //var s []interface{} = t 
 t := []int{1, 2, 3, 4} //right 
@@ -74,7 +74,7 @@ for i, v := range t {
  s[i] = v 
 }
 ```
-```go
+```c
 str, ok := value.(string) 
 if ok { 
  fmt.Printf("string value is: %q\n", str) 
@@ -84,7 +84,7 @@ if ok {
 ```
 在Go语言中，我们可以使用type switch语句查询接口变量的真实数据类型，语法如下：
 
-```go
+```c
 type Stringer interface { 
   String() string 
 } 
@@ -98,7 +98,7 @@ case Stringer: //type of str is Stringer
 }
 ```
 也可以使用“comma, ok”的习惯用法来安全地测试值是否为一个字符串：
-```go
+```c
 str, ok := value.(string) 
 if ok { 
   fmt.Printf("string value is: %q\n", str) 
@@ -107,7 +107,7 @@ if ok {
 }
 ```
 ### 接口赋值
-```go
+```c
 package main 
   
 import ( 
@@ -142,19 +142,19 @@ func main() {
 ```
 go语言可以根据下面的函数:
 
-```go
+```c
 func (a Integer) Less(b Integer) bool
 ```
 自动生成一个新的Less()方法
-```go
+```c
 func (a *Integer) Less(b Integer) bool
 ```
 这样，类型*Integer就既存在Less()方法，也存在Add()方法，满足LessAdder接口。 而根据
-```go
+```c
 func (a *Integer) Add(b Integer)
 ```
 这个函数无法生成以下成员方法：
-```go
+```c
 func(a Integer) Add(b Integer) { 
   （&a).Add(b) 
 }
@@ -163,7 +163,7 @@ func(a Integer) Add(b Integer) {
 
 ### 接口查询
 接口查询是否成功，要在运行期才能够确定。他不像接口的赋值，编译器只需要通过静态类型检查即可判断赋值是否可行。
-```go
+```c
 var file1 Writer = ...
 if file5,ok := file1.(two.IStream);ok {
 ...
@@ -172,7 +172,7 @@ if file5,ok := file1.(two.IStream);ok {
 这个if语句检查file1接口指向的对象实例是否实现了two.IStream接口，如果实现了，则执行特定的代码。
 
 在Go语言中，你可以询问它指向的对象是否是某个类型，比如，
-```go
+```c
 var file1 Writer = File{}
 if file6,ok := file1.(*File);ok {
 ...
@@ -181,7 +181,7 @@ if file6,ok := file1.(*File);ok {
 这个if语句判断file1接口指向的对象实例是否是*File类型，如果是则执行特定的代码。
 > Note, 判断类型一定使用`*`，否则，函数将认为File为一个接口，判断file1是否是File接口
 
-```go
+```c
 slice := make([]int, 0)
 slice = append(slice, 1, 2, 3)
  
@@ -194,7 +194,7 @@ if res, ok := I.([]int)；ok {
 ```
 这个if语句判断接口I所指向的对象是否是[]int类型，如果是的话输出切片中的元素。
 
-```go
+```c
 func Sort(array interface{}, traveser Traveser) error {
  
   if array == nil {

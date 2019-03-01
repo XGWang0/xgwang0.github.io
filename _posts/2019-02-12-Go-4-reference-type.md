@@ -10,7 +10,7 @@ author: Root Wang
 {:toc}
 
 ### 如何区分值类型，还是引用类型
-```go
+```c
 b = a
 b.Modify()
 ``
@@ -21,7 +21,7 @@ Go语言中的大多数类型为值类型，包括
 * 基本类型：byte, int, bool, float32, float64, string 等
 * 复合类型：array, struct, pointer等
 
-```go
+```c
 var a = [3]int{1,2,3}
 var b = a
 b[0] = 100
@@ -31,7 +31,7 @@ fmt.Println(a,b)
 ```
 >这表明b = a是数组内容的完整复制。
 
-```go
+```c
 var a = [3]int{1,2,3}
 var b = &a
 b[0] = 100
@@ -52,7 +52,7 @@ a=%!p([3]int=[100 2 3]), b=0xc42001c5c0
 
 #### 数组切片
 本质是一个区间，可以大致将[]T表示为：
-```go
+```c
 type slice struct {
 first *T
 len int
@@ -60,7 +60,7 @@ cap int
 }
 ```
 >因为数组切片内部是个指针T，所以改变指针T的元素内容，一定会反映到array T中。 但是数组切片的类型本身赋值仍然是值语义
-```go
+```c
 	var a = [10]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 0}
 	var b = a[2:5]
 	fmt.Printf("\n%p,%p\n%p,%p\n", &a, &b, a, b)
@@ -76,7 +76,7 @@ a=%!p([10]int=[1 2 3 4 5 6 7 8 9 0]),  b=0xc420022060
 
 #### map
 map本质上是一个字典指针，大致可以表示map[key]value为：
-```go
+```c
 type Map_Key_Value struct {
 	....
 }
@@ -93,7 +93,7 @@ channel与map类似，本质上也是一个指针。
 
 #### interface
 
-```go
+```c
 type interface struct {
 	data *void
 	itab *Itab

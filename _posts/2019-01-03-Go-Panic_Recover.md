@@ -18,7 +18,7 @@ recover()用于将panic的信息捕捉。recover必须定义在panic之前的def
 
 #### Sample
 1. panic
-```go
+```c
 func sample(a int) int {
 	defer func() {
 		fmt.Println("defer in smaple before panic")
@@ -62,7 +62,7 @@ exit status 1
 
 2. recover
 
-```go
+```c
 func sample(a int) int {
 	defer func() {
 		if r := recover(); r != nil {
@@ -98,7 +98,7 @@ Goroutine continue
 
 > panic抛出的错误可以透传到调用者， 参考下例
 
-```go
+```c
 func sample(a int) int {
 	defer func() {
 		fmt.Println("defer in smaple before panic")

@@ -49,7 +49,7 @@ goroutine : go语言中并发指的是让某个函数独立于其他函数运行
 #### 实例
 Go的并发原理我们刚刚讲了，那么Go的并行是怎样的呢？其实答案非常简单，多创建一个逻辑处理器就好了，这样调度器就可以同时分配全局运行队列中的goroutine到不同的逻辑处理器上并行执行。
 
-```go
+```c
 func main() {
 	var wg sync.WaitGroup
 	wg.Add(2)
@@ -78,7 +78,7 @@ sync.WaitGroup的使用也非常简单，先是使用Add 方法设设置计算�
 
 默认情况下，Go默认是给每个可用的物理处理器都分配一个逻辑处理器，因为我的电脑是4核的，所以上面的例子默认创建了4个逻辑处理器，所以这个例子中同时也有并行的调度，如果我们强制只使用一个逻辑处理器，我们再看看结果。
 
-```go
+```c
 func main() {
 	runtime.GOMAXPROCS(1)
 	var wg sync.WaitGroup
@@ -102,7 +102,7 @@ func main() {
 #### goroutine的嵌套
 goroutinue 协程嵌套，会产生依赖关系(父子关系)么？
 上货
-```go
+```c
 package main
  
 import (
@@ -135,7 +135,7 @@ main alive
 
 #### Q&A
 
-```go
+```c
 
 ch := chan int
 ch-<1
@@ -146,7 +146,7 @@ fatal error: all goroutines are asleep – deadlock!
 > 原因为：当channel为非缓冲类型channel时候，ch<-num和<-ch都会保持等待状态。main goroutine线中，期待从其他goroutine线读取数据，但是其他goroutine线都已经执行完了或者没有其他goroutine(all goroutines are asleep)，那么就永远不会从管道中取出数据。所以，main goroutine线在等一个永远不会被取出的数据，那整个程序就永远等下去了。
 
 
-```go
+```c
 ch := make(chan int, 10)
 ch <- 10
 ch <- 10

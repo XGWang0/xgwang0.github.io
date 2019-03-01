@@ -15,11 +15,11 @@ Golang使用包（package）这种语法元素来组织源码，所有语法可�
 Golang中包的定义和使用看起来十分简单：
 
 通过package关键字定义包：
-```go
+```c
    package xxx
 ```
 使用import关键字，导入要使用的标准库包或第三方依赖包。
-```go
+```c
    import "a/b/c"
    import "fmt"
 
@@ -67,7 +67,7 @@ $GOPATH/src/
             – main.go
 ```
 
-```go
+```c
 //foo1.go
 package foo
 
@@ -78,7 +78,7 @@ func Foo1() {
 }
 ```
 
-```go
+```c
 // main.go
 package main
 
@@ -99,7 +99,7 @@ Foo1
 
 现在我们无法看出使用的到底是foo的源码还是foo.a，因为目前它们的输出都是一致的。我们修改一下foo1.go的代码：
 
-```go
+```c
 //foo1.go
 package foo
 
@@ -168,7 +168,7 @@ Go标准库中的包也是这样么？
 对于标准库，比如fmt而言，编译时，到底使用的时$GOROOT/src下源码还是$GOROOT/pkg下已经编译好的.a呢？
 
 我们不妨也来试试，一个最简单的hello world例子：
-```go
+```c
 //main.go
 import "fmt"
 
@@ -219,7 +219,7 @@ $GOPATH
 
 我们建立libproj2/foo目录，其中的foo1.go代码如下：
 
-```go
+```c
 //foo1.go
 package bar
 
@@ -235,7 +235,7 @@ func Bar1() {
 *接下来就给app2带来了难题：该如何import bar包呢？*
 
 我们假设import路径中的最后一个元素是包名，而非路径名。
-```go
+```c
 //app2/main.go
 
 package main
@@ -259,7 +259,7 @@ main.go:5:2: cannot find package "libproj2/bar" in any of:
 编译失败，在两个路径下无法找到对应libproj2/bar包。
 
 我们的假设错了，我们把它改为路径：
-```go
+```c
 //app2/main.go
 
 package main
@@ -285,7 +285,7 @@ Bar1
 
 go编译器在这些`路径(libproj2/foo)下找bar包`。这样看来，go语言的惯例只是一个特例，即恰好目录名与包名一致罢了。也就是说下面例子中的两个foo含义不同：
 
-```go
+```c
 import "libproj1/foo"
 
 func main() {
@@ -296,7 +296,7 @@ func main() {
 
 再类比一下标准库包fmt。
 
-```go
+```c
 import "fmt"
 fmt.Println("xxx")
 ```
@@ -306,7 +306,7 @@ fmt.Println("xxx")
 ### import m "lib/math"
 
 Go language specification中关于import package时列举的一个例子如下：
-```go
+```c
 Import declaration          Local name of Sin
 
 import   "lib/math"         math.Sin
@@ -327,7 +327,7 @@ import . "lib/math"         Sin
 
 *我们在libproj1/foo下新增一个go源文件，bar1.go：*
 
-```go
+```c
 package bar
 
 import "fmt"
@@ -349,7 +349,7 @@ can't load package: package libproj1/foo: found packages bar1.go (bar) and foo1.
 
 我们建立app3目录，其main.go的源码如下：
 
-```go
+```c
 //main.go
 package main
 

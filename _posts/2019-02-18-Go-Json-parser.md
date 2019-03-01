@@ -13,7 +13,7 @@ author: Root Wang
 
 上干货
 1. 一个结构体正常序列化
-```go
+```c
 package main
 import (
     "encoding/json"
@@ -46,7 +46,7 @@ func main() {
 ```
 
 2. 给结构体的每个字段打上一个标签(tag)，标签冒号前是类型，后面是标签名
-```go
+```c
 // Product 商品信息
 type Product struct {
     Name      string `json:"name"`
@@ -61,7 +61,7 @@ type Product struct {
 ```
 
 3. omitempty，tag里面加上omitempy，可以在序列化的时候忽略0值或者空值
-```go
+```c
 package main
 
 import (
@@ -95,7 +95,7 @@ p.ProductID = 0
 
 4. type，有些时候，我们在序列化或者反序列化的时候，可能结构体类型和需要的类型不一致，这个时候可以指定,支持string,number和boolean
 
-```go
+```c
 package main
 
 import (
