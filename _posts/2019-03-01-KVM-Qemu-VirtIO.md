@@ -45,6 +45,9 @@ QEMU模拟I/O设备的方式，其优点是可以通过软件模拟出各种各�
 ### virtIO的后端实现
 基于上面描述的问题，virtIo给出了比较好的而解决方案。 而事实上，virtIO的出现不仅仅是解决了效率的问题。`其更是为各大虚拟化引擎提供了一个统一的外部设备驱动`。
 
+各设备的架构图:
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/virtio_pic2.1.gif)
+
 先来看个virtIO整体架构图
 ![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/virtio_pic2.jpg)
 
@@ -175,4 +178,40 @@ virtqueue中的last_avail_idx记录ring[]数组中`首个可用的buffer头部`�
 
  小结：上面结合重要的数据结构分析了virtIO后端驱动的工作模式，虽然笔者尽可能的想要分析清楚，但是总感觉表达能力有限，不足之处还请谅解！下面会结合qemu源代码就具体的网络数据包的接收，做简要的分析。
 
+### VirtIO 前端
+严格来说，virtio 和 virtio-ring 可以看做是一层，virtio-ring 实现了 virtio 的具体通信机制和数据流程。或者这么理解可能更好，virtio 层属于控制层，负责前后端之间的通知机制（kick，notify）和控制流程，而 virtio-vring 则负责具体数据流转发
 
+我们回到前面的图：
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/virtio_pic5.png)
+
+vring 包含三个部分，描述符数组 desc，可用的 available ring 和使用过的 used ring。
+
+desc 用于存储一些关联的描述符，每个描述符记录一个对 buffer 的描述，available ring 则用于 guest 端表示当前有哪些描述符是可用的，而 used ring 则表示 host 端哪些描述符已经被使用。
+
+Virtio 使用 virtqueue 来实现 I/O 机制，每个 virtqueue 就是一个承载大量数据的队列，具体使用多少个队列取决于需求，例如，virtio 网络驱动程序（virtio-net）使用两个队列（一个用于接受，另一个用于发送），而 virtio 块驱动程序（virtio-blk）仅使用一个队列。
+
+具体的，假设 guest 要向 host 发送数据，首先，guest 通过函数 virtqueue_add_buf 将存有数据的 buffer 添加到 virtqueue 中，然后调用 virtqueue_kick 函数，virtqueue_kick 调用 virtqueue_notify 函数，通过写入寄存器的方式来通知到 host。host 调用 virtqueue_get_buf 来获取 virtqueue 中收到的数据。
+
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/virtio_pic7.png)
+
+存放数据的 buffer 是一种分散-聚集的数组，由 desc 结构来承载，如下是一种常用的 desc 的结构：
+
+当 guest 向 virtqueue 中写数据时，实际上是向 desc 结构指向的 buffer 中填充数据，完了会更新 available ring，然后再通知 host。
+
+当 host 收到接收数据的通知时，首先从 desc 指向的 buffer 中找到 available ring 中添加的 buffer，映射内存，同时更新 used ring，并通知 guest 接收数据完毕。
+
+virtio 前端的对象层次结构:
+![](https://github.com/XGWang0/xgwang0.github.io/raw/master/_images/virtio_pic8.gif)
+
+该流程以创建 virtio_driver 并通过 register_virtio_driver 进行注册开始。virtio_driver 结构定义上层设备驱动程序、驱动程序支持的设备 ID 的列表、一个特性表单（取决于设备类型）和一个回调函数列表。当 hypervisor 识别到与设备列表中的设备 ID 相匹配的新设备时，将调用 probe 函数（由 virtio_driver 对象提供）来传入 virtio_device 对象。将这个对象和设备的管理数据缓存起来（以独立于驱动程序的方式缓存）。可能要调用 virtio_config_ops 函数来获取或设置特定于设备的选项，例如，为 virtio_blk 设备获取磁盘的 Read/Write 状态或设置块设备的块大小，具体情况取决于启动器的类型。
+
+注意，virtio_device 不包含到 virtqueue 的引用（但 virtqueue 确实引用了 virtio_device）。要识别与该 virtio_device 相关联的 virtqueue，您需要结合使用 virtio_config_ops 对象和 find_vq 函数。该对象返回与这个 virtio_device 实例相关联的虚拟队列。find_vq 函数还允许为 virtqueue 指定一个回调函数（查看 图 4 中的 virtqueue 结构）。
+
+virtqueue 是一个简单的结构，它识别一个可选的回调函数（在 hypervisor 使用缓冲池时调用）、一个到 virtio_device 的引用、一个到 virtqueue 操作的引用，以及一个引用要使用的底层实现的特殊 priv 引用。虽然 callback 是可选的，但是它能够动态地启用或禁用回调。
+
+该层次结构的核心是 virtqueue_ops，它定义在来宾操作系统和 hypervisor 之间移动命令和数据的方式。让我们首先探索添加到或从 virtqueue 移除的对象。
+
+总结：
+virtio 是 guest 与 host 之间通信的润滑剂，提供了一套通用框架和标准接口或协议来完成两者之间的交互过程，极大地解决了各种驱动程序和不同虚拟化解决方案之间的适配问题。
+
+virtio 抽象了一套 vring 接口来完成 guest 和 host 之间的数据收发过程，结构新颖，接口清晰。
