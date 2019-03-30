@@ -90,7 +90,7 @@ NameError: name '_Test' is not defined
 > All object with prefix '_', can be called through explicitly importing. Namely, add "from test import _Test, _var1, BaseClass" to __init__.py and "from lib import _Test, _var1, BaseClass" to call.py 
 
 
-### _
+### \_
 
 1. 在解释器中：在这种情况下，"_"代表交互式解释器会话中上一条执行的语句的结果。这种用法首先被标准CPython解释器采用，然后其他类型的解释器也先后采用
 ```python
