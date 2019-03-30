@@ -493,7 +493,46 @@ foo = Foo()
 
 上面这个例子中， attr 是类 Foo 的一个成员函数，可通过语句 foo.attr() 被调用。 但当它被 @property 修饰后，这个成员函数将不再是一个函数，而变为一个描述符。 bar 是一个未被修饰的成员函数。 type(Foo.attr) 与 type(Foo.bar) 的结果分别为： 
 
-```python class Foo: @property def AAA(self): print('get的时候运行我啊') @AAA.setter def AAA(self,value): print('set的时候运行我啊') @AAA.deleter def AAA(self): print('delete的时候运行我啊') #只有在属性AAA定义property后才能定义AAA.setter,AAA.deleter f1=Foo() f1.AAA f1.AAA='aaa' del f1.AAA #方式2 class Foo: def get_AAA(self): print('get的时候运行我啊') def set_AAA(self,value): print('set的时候运行我啊') def delete_AAA(self): print('delete的时候运行我啊') AAA=property(get_AAA,set_AAA,delete_AAA) #内置property三个参数与get,set,delete一一对应 f1=Foo() f1.AAA f1.AAA='aaa' del f1.AAA ``` property将一个函数变成了类似于属性的使用，无非只是省略了一个括号而已，可是这有什么意义？以属性的方式来调用函数，换句话说，我以为我调用的是属性，但是其实是函数，这样就完成了一个封装，不需要setter和getter，而直接将setter和getter内嵌进去，大大减少了代码量，使代码简洁美观 案例一： ```python class Goods: def __init__(self): # 原价 self.original_price = 100 # 折扣 self.discount = 0.8 @property
+```python
+class Foo: 
+	@property
+	def AAA(self):
+		print('get的时候运行我啊') 
+	
+	@AAA.setter 
+	def AAA(self,value): 
+		print('set的时候运行我啊') 
+
+	@AAA.deleter 
+	def AAA(self): 
+		print('delete的时候运行我啊') 
+```
+> 只有在属性AAA定义property后才能定义AAA.setter,AAA.deleter f1=Foo() f1.AAA f1.AAA='aaa' del f1.AAA 
+
+方式2 
+```python
+class Foo: 
+	def get_AAA(self): 
+		print('get的时候运行我啊') 
+	def set_AAA(self,value): 
+		print('set的时候运行我啊') 
+	def delete_AAA(self): 
+		print('delete的时候运行我啊') 
+
+	AAA=property(get_AAA,set_AAA,delete_AAA) 
+```
+> 内置property三个参数与get,set,delete一一对应 f1=Foo() f1.AAA f1.AAA='aaa' del f1.AAA
+> property将一个函数变成了类似于属性的使用，无非只是省略了一个括号而已，可是这有什么意义？以属性的方式来调用函数，换句话说，我以为我调用的是属性，但是其实是函数，这样就完成了一个封装，不需要setter和getter，而直接将setter和getter内嵌进去，大大减少了代码量，使代码简洁美观 
+
+案例一： 
+
+```python 
+class Goods: 
+    def __init__(self): # 原价 
+	self.original_price = 100 # 折扣 
+	self.discount = 0.8 
+
+    @property
     def price(self):
         # 实际价格 = 原价 * 折扣
         new_price = self.original_price * self.discount
