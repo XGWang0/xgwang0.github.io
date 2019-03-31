@@ -25,9 +25,9 @@ Sample:
     Take network card `02:00.0 Ethernet controller: Broadcom Limited NetXtreme BCM5720 Gigabit Ethernet PCIe` as example
 
 3. Find the iommu group of this device
+
 ```sh
 /sys/bus/pci/devices/0000:02:00.0 # readlink iommu_group
-
 ../../../../kernel/iommu_groups/16
 ```
 

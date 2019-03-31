@@ -18,6 +18,7 @@ recover()用于将panic的信息捕捉。recover必须定义在panic之前的def
 
 #### Sample
 1. panic
+
 ```c
 func sample(a int) int {
 	defer func() {
@@ -58,6 +59,7 @@ exit status 2
 exit status 1
 
 ```
+
 > Panic 抛出错误异常, defer（panic之前声明的） 仍然会执行， defer（panic之后声明的）将被舍弃
 
 2. recover
