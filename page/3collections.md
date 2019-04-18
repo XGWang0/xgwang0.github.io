@@ -55,6 +55,8 @@ type: page
 
 ## 工具
 
+* [Vim for C code](https://blog.csdn.net/wzq2009/article/details/82527345)
+
 * [Markdown Syntax](https://www.jianshu.com/p/b03a8d7b1719)
 
 * [box-shadow generator](http://www.cssmatic.com/box-shadow)
