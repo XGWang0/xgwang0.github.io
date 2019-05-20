@@ -55,3 +55,25 @@ func main() {
     fmt.Println(who) // {Alice 28 false}
 }
 ```
+
+```c
+package main
+
+import (
+	//"bytes"
+	"fmt"
+	"unsafe"
+)
+
+var s string = "constant"
+
+func main() {
+	var f float64 = 1.2222
+	var ui = unsafe.Pointer(&f)
+	fmt.Printf("point:%p, s_point:%x, uintptr:%x\n", &f, unsafe.Pointer(&f), uintptr(ui))
+}
+
+-------------------
+point:0xc420018238, s_point:c420018238, uintptr:c420018238
+
+```
